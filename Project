@@ -19,3 +19,11 @@ Do not change the existing navbar, sidebar, profile page, or other unrelated com
 Preserve the existing styling and make the new controls consistent with the current UI.
 After making the changes, run the frontend build and report any errors.
 For the Save and Submit for Processing buttons, do not create new button colors or styling. Reuse the existing common Button component/style from the project's common/shared folder (for example, Button.js) so that Create Payroll follows the application's standard button design, colors, hover states, spacing, and typography. Inspect the existing common Button implementation first and use it rather than duplicating its styles. Do not modify the common Button component unless absolutely necessary.
+
+
+Revert any changes made to the common Button.js component and do not modify it.
+Use the existing shared Button component exactly as it currently exists.
+Only modify the Create Payroll frontend and its directly associated files.
+Preserve the existing Payment Currency implementation.
+Do not modify Navbar, Sidebar, User Profile, backend, or any other unrelated components.
+After reverting the Button.js changes, run the frontend build again and confirm that it compiles successfully.
