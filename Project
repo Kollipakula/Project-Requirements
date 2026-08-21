@@ -1,0 +1,21 @@
+Update only the Create Payroll frontend . Do not modify the payment currency implementation or any unrelated functionality.
+
+Change the Debit Account field in Batch Details from a text input to a dropdown/select.
+Since there is currently no backend/API for account data, use static frontend options:
+Main Operating Account
+Payroll Account
+Foreign Currency (FX) Account
+Keep the selected debit account in the existing frontend state/form handling so it works correctly when the form is submitted.
+In Employee Transactions, keep the existing column order and add Bank Code immediately after Beneficiary Account and before Amount.
+Bank Code should be a text input for now.
+Change the Action column to provide both Edit and Remove functionality.
+Edit should allow the selected employee transaction row to be modified without creating a duplicate row.
+Remove should delete only the selected row.
+Add Row should continue to work correctly with the new Bank Code field.
+Update any frontend validation, state objects, form handling, and payload construction required for the new fields.
+Do not introduce backend/API changes.
+Do not change the existing Payment Currency implementation.
+Do not change the existing navbar, sidebar, profile page, or other unrelated components.
+Preserve the existing styling and make the new controls consistent with the current UI.
+After making the changes, run the frontend build and report any errors.
+For the Save and Submit for Processing buttons, do not create new button colors or styling. Reuse the existing common Button component/style from the project's common/shared folder (for example, Button.js) so that Create Payroll follows the application's standard button design, colors, hover states, spacing, and typography. Inspect the existing common Button implementation first and use it rather than duplicating its styles. Do not modify the common Button component unless absolutely necessary.
