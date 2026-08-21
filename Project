@@ -27,3 +27,27 @@ Only modify the Create Payroll frontend and its directly associated files.
 Preserve the existing Payment Currency implementation.
 Do not modify Navbar, Sidebar, User Profile, backend, or any other unrelated components.
 After reverting the Button.js changes, run the frontend build again and confirm that it compiles successfully.
+
+
+
+
+
+Fix only the horizontal overflow in the Create Payroll Employee Transactions section.
+
+The new Bank Code column is correct and must remain after Beneficiary Account. Do not remove or change any existing functionality.
+
+Make the Employee Transactions table and its input fields fit within the available desktop content width so that the page does not show a horizontal scrollbar at normal desktop resolution.
+
+Adjust only the necessary Create Payroll table/layout CSS:
+
+Make the columns responsive/flexible.
+Reduce excessive column widths, padding, or gaps if necessary.
+Ensure Employee ID, Employee Name, Beneficiary Account, Bank Code, Amount, and Action all fit within the available width.
+Keep inputs visually consistent with the existing UI.
+Keep Edit and Remove actions visible.
+Do not change the Payment Currency implementation.
+Do not modify Navbar, Sidebar, User Profile, backend, or unrelated components.
+Do not change the overall page layout.
+The goal is simply to make the existing Employee Transactions section fit cleanly without horizontal scrolling.
+
+After the change, run the frontend build and report any errors.
