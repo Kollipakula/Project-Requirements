@@ -367,3 +367,36 @@ D. What should NOT be changed
 E. A step-by-step implementation plan
 
 Again: DO NOT MODIFY ANY CODE. Only analyze the current project and provide the plan.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Please make ONLY the necessary responsive CSS/layout improvements to the existing Create Payroll frontend.
+
+The functionality and existing design are already implemented correctly. Do NOT change the business logic or functionality.
+
+Responsive requirements:
+
+- Test and optimize the Create Payroll page for desktop, tablet, and mobile screen sizes.
+- The page must fit within the available viewport width at different screen sizes.
+- Remove unnecessary horizontal scrolling from the overall page.
+- Do not simply hide content or use overflow-x: hidden as a workaround.
+- Instead, properly adjust widths, padding, margins, flex/grid behavior, table layout, and responsive breakpoints.
+- Employee Transactions must remain usable on smaller screens.
+- Inputs, dropdowns, buttons, Payment Summary, and Saved Payroll Drafts must resize/reflow appropriately.
+- The Save Draft and Submit for Processing buttons should remain properly aligned on desktop and stack or resize appropriately on smaller screens.
+- The Employee Transactions table should not force the entire page to become wider than the viewport.
+- If the table genuinely requires horizontal scrolling on a very small mobile screen, contain the scrolling within the table/card area rather than making the entire page horizontally scroll.
+- Ensure there is no unwanted horizontal scrollbar on normal desktop and tablet views.
+- Check common breakpoints such as desktop, tablet, and mobile widths.
+- Preserve the existing color palette, typography, spacing, and visual design.
+- Do not redesign the page.
+- Do not modify Navbar, Sidebar, User Profile, backend, APIs, or unrelated components.
+- Do not modify existing Create Payroll functionality, validation, pagination, draft saving/loading, Add Row, or Remove behavior.
+- Modify only the Create Payroll CSS/layout where necessary.
+
+After making the changes:
+1. Run the frontend build.
+2. Confirm that it compiles successfully.
+3. Tell me which CSS/layout files were modified.
+4. Confirm that the overall page no longer has unnecessary horizontal scrolling on desktop and tablet.
