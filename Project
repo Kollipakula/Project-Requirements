@@ -212,3 +212,158 @@ After implementing the changes:
 4. Confirm that there is exactly ONE Save Draft button and that it appears immediately before Submit for Processing.
 5. Confirm that Saved Payroll Drafts appears below both action buttons.
 6. Confirm that no unnecessary horizontal scrolling was introduced.
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+I want you to analyze the CURRENT project and create a detailed plan/recommendation for how the Dashboard page should look and behave.
+
+IMPORTANT:
+- DO NOT MODIFY ANY CODE.
+- DO NOT CREATE OR DELETE FILES.
+- This is a planning/recommendation task only.
+- First inspect the existing project structure and understand the current application.
+
+PROJECT CONTEXT:
+This is a Corporate Banking Payment Initiation application.
+
+The project already contains pages/features such as:
+- Dashboard
+- Create Payroll
+- Quick Payment
+- Payment History / Transaction Details
+- Transaction Management
+- Payment Status
+- Accounts
+- Authentication/Login
+- Beneficiaries
+- Approval-related functionality
+- Reports/other existing modules
+
+Please inspect the actual project files and determine what functionality is already implemented rather than assuming the above list is complete.
+
+WHAT I WANT FROM YOU:
+
+1. Analyze the current project structure
+- Identify the existing pages.
+- Identify the existing reusable components.
+- Identify the existing Navbar, Sidebar, Header, Button components, cards, tables, etc.
+- Identify the current routing structure.
+- Identify the existing CSS/design system.
+- Identify what information is already available from the frontend/services.
+- Identify what is currently static and what is connected to APIs/backend.
+
+2. Based on the CURRENT project, recommend how the Dashboard should look.
+
+I want the Dashboard to feel like a professional Corporate Banking dashboard, not like a generic student/project dashboard.
+
+Suggest:
+- Overall page layout
+- Sidebar/navigation structure
+- Header/top bar
+- Welcome section
+- Summary/KPI cards
+- Account overview section
+- Recent payments/transactions
+- Payment status information
+- Pending approvals
+- Quick actions
+- Charts/graphs if they actually make sense
+- Alerts/notifications
+- Any other useful sections based on the functionality already present in this project
+
+3. Do not add unnecessary features.
+
+Every dashboard section should have a reason based on the existing Corporate Banking application.
+
+For example, if the project already has:
+- Create Payroll
+- Quick Payment
+- Payment History
+- Accounts
+- Approvals
+
+then explain how those features could be surfaced naturally from the Dashboard.
+
+4. Recommend the visual design.
+
+Please suggest:
+- Color palette based on the existing application
+- Card design
+- Typography
+- Spacing
+- Borders/shadows
+- Button styling
+- Icons
+- Table/list styling
+- Responsive behavior for desktop/tablet/mobile
+
+IMPORTANT:
+Reuse the existing project's design language and common components wherever possible instead of introducing a completely different design.
+
+5. Give me a proposed Dashboard wireframe/layout.
+
+Show the recommended structure approximately like:
+
+Sidebar
+   ↓
+Header
+   ↓
+Welcome / Overview
+   ↓
+KPI Cards
+   ↓
+Main Dashboard Sections
+   ↓
+Recent Activity / Payments
+   ↓
+Quick Actions / Approvals / Alerts
+
+But customize the structure according to what you actually find in the project.
+
+6. Explain what should be STATIC for now and what should eventually come from the BACKEND/API.
+
+For example:
+- Account balances → API
+- Recent transactions → API
+- Pending approvals → API
+- Payment statistics → API
+- User name → authentication/user data
+- UI labels → static
+
+7. Identify potential issues in the current project that should be considered before implementing the Dashboard.
+
+For example:
+- Existing routing issues
+- Duplicate BrowserRouter
+- Existing component reuse problems
+- CSS conflicts
+- Inconsistent button styling
+- Missing reusable components
+- Data/service limitations
+
+Do not fix these issues. Just mention them in the plan if they affect Dashboard implementation.
+
+8. Finally, provide a recommended implementation plan in phases:
+
+Phase 1: Layout
+Phase 2: Existing reusable components
+Phase 3: Dashboard sections
+Phase 4: Static/mock data
+Phase 5: Backend/API integration later
+Phase 6: Responsive design
+Phase 7: Testing
+
+At the end, give me:
+A. Recommended Dashboard structure
+B. Recommended sections and why
+C. Components/files that would need to be created or modified
+D. What should NOT be changed
+E. A step-by-step implementation plan
+
+Again: DO NOT MODIFY ANY CODE. Only analyze the current project and provide the plan.
