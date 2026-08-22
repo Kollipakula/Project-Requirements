@@ -135,3 +135,80 @@ Update only the Create Payroll frontend functionality and its directly related C
     - Bank Code remains correctly associated with each row.
     - Saved drafts can be loaded after refreshing the browser.
     - No backend/API changes were introduced.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Please make the following changes ONLY to the Create Payroll frontend page.
+
+Do not modify the Navbar, Sidebar, User Profile, backend, APIs, or unrelated components.
+
+Before making changes, inspect the existing CreatePayroll.js and Payments.css carefully and preserve the current functionality and design wherever possible.
+
+1. Save Draft, Submit for Processing, and Saved Payroll Drafts
+
+The bottom part of the Create Payroll page must follow this exact order:
+
+Payment Summary
+↓
+[Save Draft] [Submit for Processing]
+↓
+Saved Payroll Drafts
+
+- Place ONE "Save Draft" button immediately beside the "Submit for Processing" button.
+- The button order must be:
+  1. Save Draft
+  2. Submit for Processing
+- Do NOT place Submit for Processing before Save Draft.
+- Do NOT create multiple Save Draft buttons.
+- If there is an existing Save Draft button elsewhere on the page, remove the duplicate and keep ONLY the Save Draft button beside Submit for Processing.
+- Do NOT keep another Save Draft button below the Saved Payroll Drafts section.
+- Keep the Saved Payroll Drafts section BELOW both action buttons.
+- Saved Payroll Drafts should be visually separated from the primary action buttons because it represents previously saved work rather than the current payroll action.
+
+Saved Payroll Draft behavior:
+- When Save Draft is clicked, save the current payroll data using the Batch Reference as the draft name.
+- Example: if Batch Reference is "AUG-Salary 2026", display "AUG-Salary 2026" under Saved Payroll Drafts.
+- Display saved draft names clearly, especially the Batch Reference.
+- When an operator clicks a saved draft, load that draft's saved data back into the Create Payroll form so they can continue editing it.
+- Preserve the existing draft-saving/loading functionality unless a change is required for the above layout.
+- Keep the Saved Payroll Drafts section clean and compact so it does not dominate the page.
+
+2. Employee Transactions
+
+- Preserve the existing Employee Transactions functionality.
+- Do not unnecessarily change the existing Add Row, Remove, editing, amount, validation, or pagination behavior.
+- If pagination already exists, preserve it and do not modify it unless required for the requested responsive layout.
+- Do not remove any existing working functionality from the transaction table.
+
+3. CSS / Responsive Layout
+
+- Make the Create Payroll page fit within the existing content area without unnecessary horizontal scrolling.
+- Do NOT increase the overall page width just to fit the transaction table.
+- Avoid creating an unnecessary horizontal scrollbar on the main page.
+- Use appropriate widths, flex/grid behavior, overflow handling, and responsive CSS where necessary.
+- On smaller screens, the layout should remain usable and readable.
+- Preserve the existing visual style, spacing, colors, buttons, and typography as much as possible.
+- Do NOT redesign the entire page.
+- Make only the CSS changes necessary to fix the layout and responsiveness.
+
+4. Important safety requirements
+
+- Make the smallest reasonable changes required for these requirements.
+- Do not remove existing working functionality.
+- Do not change unrelated files or components.
+- Do not modify backend code.
+- Do not modify APIs.
+- Do not change Navbar, Sidebar, User Profile, or other pages.
+- Before finishing, verify that the frontend compiles successfully.
+- Review the final git diff and ensure only the intended Create Payroll frontend files were modified.
+- Do not overwrite or undo unrelated changes that already exist in the working tree.
+
+After implementing the changes:
+1. Summarize exactly what was changed.
+2. List the files modified.
+3. Confirm whether the frontend build compiled successfully.
+4. Confirm that there is exactly ONE Save Draft button and that it appears immediately before Submit for Processing.
+5. Confirm that Saved Payroll Drafts appears below both action buttons.
+6. Confirm that no unnecessary horizontal scrolling was introduced.
