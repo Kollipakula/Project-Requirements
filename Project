@@ -51,3 +51,87 @@ Do not change the overall page layout.
 The goal is simply to make the existing Employee Transactions section fit cleanly without horizontal scrolling.
 
 After the change, run the frontend build and report any errors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Update only the Create Payroll frontend functionality and its directly related CSS. Do not modify the backend or any unrelated components.
+
+1. Fix the Employee Transactions table so that the first row can always be added/displayed correctly.
+
+2. Fix the Add Row functionality so that adding multiple rows works correctly without skipping or preventing the first few rows. If I add 5 rows, all 5 rows must be displayed correctly.
+
+3. Add frontend pagination to the Employee Transactions table:
+   - Show a maximum of 5 employee transaction rows per page.
+   - If there are more than 5 rows, show the next 5 rows on the next page.
+   - Provide Previous and Next pagination buttons.
+   - Disable Previous on the first page.
+   - Disable Next on the last page.
+   - Pagination must not delete or duplicate any rows.
+
+4. Keep the existing Employee Transactions column order.
+   - Employee ID
+   - Employee Name
+   - Beneficiary Account
+   - Bank Code
+   - Amount
+   - Action
+
+5. Keep Beneficiary Account as a single-line field and make sure the table layout fits properly within the existing page/card without unwanted horizontal scrolling.
+
+6. I have intentionally removed the Edit button from the Action column. Do NOT re-add the Edit button.
+   - Keep only the existing Remove functionality.
+   - Remove must delete only the selected transaction row.
+   - Do not change the existing Remove behavior unless required to fix the row/pagination logic.
+
+7. Ensure Add Row continues to work correctly with all existing fields, including Bank Code.
+
+8. Add/maintain frontend validation and state handling required for all transaction rows and pagination.
+
+9. Add a frontend-only "Save Draft" behavior below the transaction section.
+   - When Save Draft is clicked, save the current payroll draft in frontend storage only (for example, localStorage).
+   - Do NOT introduce any backend/API/database changes.
+   - The saved draft should include the Batch Reference and the current payroll transaction data.
+
+10. Display the saved draft below the Save Draft area using the Batch Reference as the draft name/title.
+    - The draft should be clickable.
+    - Clicking a saved draft should load its saved payroll data back into the Create Payroll form so the user can continue editing it.
+    - Do not create duplicate drafts unnecessarily.
+
+11. Make sure the draft data persists after refreshing the browser by using frontend storage only.
+
+12. Do not modify the existing Payment Currency implementation.
+
+13. Do not modify the navbar, sidebar, profile page, backend, or unrelated components.
+
+14. Do not change existing functionality unless it is directly related to the requirements above.
+
+15. Preserve the existing UI design and styling.
+    - Adjust only the CSS necessary to make the table, pagination, and saved draft section fit properly.
+    - Do not introduce unwanted horizontal scrolling on normal desktop view.
+    - Keep the existing responsive behavior.
+
+16. Do not create new button colors or unrelated button styling. Reuse the existing common/shared Button component and its existing styling wherever applicable.
+
+17. After making the changes, run the frontend build and confirm whether it compiles successfully.
+
+18. Before finishing, verify:
+    - First transaction row appears correctly.
+    - Add Row works repeatedly.
+    - 5 rows appear on page 1.
+    - Additional rows appear on page 2.
+    - Previous/Next pagination works correctly.
+    - Remove works on the correct row.
+    - Bank Code remains correctly associated with each row.
+    - Saved drafts can be loaded after refreshing the browser.
+    - No backend/API changes were introduced.
