@@ -309,7 +309,42 @@ button {
   border: none;
   cursor: pointer;
 }
+----------------------------------------------------------------------------------------------------
+return (
+  <div className="container">
 
+    <h1>Customers</h1>
+
+    <div className="customer-list">
+      <CustomerList
+        customers={customers}
+        selectCustomer={selectCustomer}
+      />
+    </div>
+
+    <div className="bottom-section">
+
+      <div className="customer-form">
+        <CustomerForm addCustomer={addCustomer} />
+      </div>
+
+      <div className="customer-details">
+        <CustomerDetails customer={selectedCustomer} />
+      </div>
+
+    </div>
+
+  </div>
+);
+
+-----------------------------------------------------------------------------------------------------------
+<div className="form-group">
+  <label>First Name</label>
+  <input
+    value={firstName}
+    onChange={(e) => setFirstName(e.target.value)}
+  />
+</div>
 button:hover {
   background-color: #125aa0;
 }
