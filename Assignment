@@ -1,0 +1,102 @@
+function HelloWorld() {
+    return (
+        <div>
+            Hello World Component
+        </div>
+    );
+}
+
+export default HelloWorld;
+
+----------------------------------------------------------
+
+function HelloMessage({ name, message = "Hi, Hello" }) {
+    return (
+        <div>
+            Message from {name}: {message}
+        </div>
+    );
+}
+
+export default HelloMessage;
+
+----------------------------------------------------------------------
+
+import { useState, useEffect } from "react";
+
+function Counter() {
+    const [seconds, setSeconds] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds(previousSeconds => previousSeconds + 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div>
+            Time Elapsed: {seconds}
+        </div>
+    );
+}
+
+export default Counter;
+----------------------------------------------------------------------------------------------
+
+function Alert() {
+
+    function showAlert() {
+        alert("React is a great UI library");
+    }
+
+    return (
+        <div>
+            <button onClick={showAlert}>
+                Click me Please
+            </button>
+        </div>
+    );
+}
+
+export default Alert;
+
+---------------------------------------------------------
+
+import HelloWorld from "./components/HelloWorld";
+import HelloMessage from "./components/HelloMessage";
+import Counter from "./components/Counter";
+import Alert from "./components/Alert";
+import "./App.css";
+
+function App() {
+    return (
+        <div className="container">
+
+            <h3>UseCase 1 - Components, Props and States</h3>
+
+            <h4>HelloWorld Component</h4>
+            <HelloWorld />
+
+            <h4>Single Prop</h4>
+            <HelloMessage name="Euler" />
+
+            <h4>Multiple Props</h4>
+            <HelloMessage
+                name="Ramanujam"
+                message="I got this in my dreams"
+            />
+
+            <h4>State and Virtual DOM</h4>
+            <Counter />
+
+            <h4>Interactive Component - Event Handling</h4>
+            <Alert />
+
+        </div>
+    );
+}
+
+export default App;
+
