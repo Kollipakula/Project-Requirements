@@ -1,102 +1,233 @@
-function HelloWorld() {
-    return (
-        <div>
-            Hello World Component
-        </div>
-    );
-}
+[
+  {
+    "id": 1,
+    "firstName": "Sundar",
+    "lastName": "Pichai",
+    "email": "sundar.pichai@google.com"
+  },
+  {
+    "id": 2,
+    "firstName": "Satya",
+    "lastName": "Nadella",
+    "email": "satya.nadella@microsoft.com"
+  },
+  {
+    "id": 3,
+    "firstName": "Jeff",
+    "lastName": "Bezos",
+    "email": "jeff.bezos@amazon.com"
+  },
+  {
+    "id": 4,
+    "firstName": "Sergey",
+    "lastName": "Brin",
+    "email": "sergey.brin@google.com"
+  },
+  {
+    "id": 5,
+    "firstName": "Larry",
+    "lastName": "Page",
+    "email": "larry.page@google.com"
+  }
+]
+---------------------
+import { useState } from "react";
+import customersData from "./customers.json";
 
-export default HelloWorld;
-
-----------------------------------------------------------
-
-function HelloMessage({ name, message = "Hi, Hello" }) {
-    return (
-        <div>
-            Message from {name}: {message}
-        </div>
-    );
-}
-
-export default HelloMessage;
-
-----------------------------------------------------------------------
-
-import { useState, useEffect } from "react";
-
-function Counter() {
-    const [seconds, setSeconds] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setSeconds(previousSeconds => previousSeconds + 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div>
-            Time Elapsed: {seconds}
-        </div>
-    );
-}
-
-export default Counter;
-----------------------------------------------------------------------------------------------
-
-function Alert() {
-
-    function showAlert() {
-        alert("React is a great UI library");
-    }
-
-    return (
-        <div>
-            <button onClick={showAlert}>
-                Click me Please
-            </button>
-        </div>
-    );
-}
-
-export default Alert;
-
----------------------------------------------------------
-
-import HelloWorld from "./components/HelloWorld";
-import HelloMessage from "./components/HelloMessage";
-import Counter from "./components/Counter";
-import Alert from "./components/Alert";
-import "./App.css";
+import CustomerList from "./components/customers/CustomerList";
+import CustomerForm from "./components/customers/CustomerForm";
+import CustomerDetails from "./components/customers/CustomerDetails";
 
 function App() {
-    return (
-        <div className="container">
 
-            <h3>UseCase 1 - Components, Props and States</h3>
+  const [customers, setCustomers] = useState(customersData);
 
-            <h4>HelloWorld Component</h4>
-            <HelloWorld />
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-            <h4>Single Prop</h4>
-            <HelloMessage name="Euler" />
+  function addCustomer(newCustomer) {
+    setCustomers([...customers, newCustomer]);
+  }
 
-            <h4>Multiple Props</h4>
-            <HelloMessage
-                name="Ramanujam"
-                message="I got this in my dreams"
-            />
+  function selectCustomer(customer) {
+    setSelectedCustomer(customer);
+  }
 
-            <h4>State and Virtual DOM</h4>
-            <Counter />
+  return (
+    <div>
+      <h1>Customers</h1>
 
-            <h4>Interactive Component - Event Handling</h4>
-            <Alert />
+      <CustomerList
+        customers={customers}
+        selectCustomer={selectCustomer}
+      />
 
-        </div>
-    );
+      <div style={{ display: "flex", gap: "100px" }}>
+
+        <CustomerForm addCustomer={addCustomer} />
+
+        <CustomerDetails customer={selectedCustomer} />
+
+      </div>
+
+    </div>
+  );
 }
 
 export default App;
 
+
+
+----------------------------------------------
+
+function CustomerList({ customers, selectCustomer }) {
+
+  return (
+    <div>
+
+      <h2>Customer List</h2>
+
+      <table border="1">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {customers.map((customer) => (
+
+            <tr
+              key={customer.id}
+              onClick={() => selectCustomer(customer)}
+            >
+              <td>{customer.id}</td>
+              <td>{customer.firstName}</td>
+              <td>{customer.lastName}</td>
+              <td>{customer.email}</td>
+            </tr>
+
+          ))}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  );
+}
+
+export default CustomerList;
+
+
+------------------------------------------------------------------------------------------------------------------
+import { useState } from "react";
+
+function CustomerForm({ addCustomer }) {
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(event) {
+
+    event.preventDefault();
+
+    const newCustomer = {
+      id: Date.now(),
+      firstName: firstName,
+      lastName: lastName,
+      email: email
+    };
+
+    addCustomer(newCustomer);
+
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+  }
+
+  return (
+    <div>
+
+      <h2>Add Customer</h2>
+
+      <form onSubmit={handleSubmit}>
+
+        <div>
+          <label>First Name</label>
+          <input
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </div>
+
+        <br />
+
+        <div>
+          <label>Last Name</label>
+          <input
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
+
+        <br />
+
+        <div>
+          <label>Email</label>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <br />
+
+        <button type="submit">
+          Submit
+        </button>
+
+      </form>
+
+    </div>
+  );
+}
+
+export default CustomerForm;
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------
+function CustomerDetails({ customer }) {
+
+  return (
+    <div>
+
+      <h2>Customer Details</h2>
+
+      {customer ? (
+        <div>
+          <p>ID: {customer.id}</p>
+          <p>First Name: {customer.firstName}</p>
+          <p>Last Name: {customer.lastName}</p>
+          <p>Email: {customer.email}</p>
+        </div>
+      ) : (
+        <p>Select a customer</p>
+      )}
+
+    </div>
+  );
+}
+
+export default CustomerDetails;
+--------------------------------------------------------------------------------------------------------------------------
