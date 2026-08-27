@@ -490,3 +490,47 @@ Important:
 - Do not rewrite or modify my code.
 - Explain the actual code that exists in CreatePayroll.js.
 - If something is unclear from the code, tell me instead of guessing.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Please update the Approval UI according to the latest clarification from our SME.
+Approval requirement:
+We have a pool of 5 configured approvers.
+A payment/batch can require either 1 approval or 2 approvals depending on the approval requirement determined for that payment.
+If 1 approval is required, any 1 eligible approver from the 5 can approve.
+If 2 approvals are required, any 2 different eligible approvers from the 5 can approve.
+The user who initiated/created the payment (Maker/Operator) must not be allowed to approve their own payment.
+Do not treat Level 1 and Level 2 as two different groups of approvers unless the existing project requirements explicitly require that. Here, "Level 1" and "Level 2" should represent the number/stage of approvals completed, not fixed approver groups.
+UI changes
+Please improve the current approval UI so that it is clean, simple, and not congested.
+Instead of displaying the approval flow in a way that suggests:
+Approver Group L1 → Approver Group L2
+use a clearer approval-progress representation.
+For example, when 2 approvals are required:
+Approval Progress: 1 / 2
+or visually:
+✓ Approval 1   →   ○ Approval 2
+When both approvals are completed:
+✓ Approval 1   →   ✓ Approval 2
+For a payment requiring only one approval, simply show:
+Approval Required: 1
+and after approval:
+✓ Approved
+The UI should clearly show:
+Approval requirement: 1 or 2
+Current approval progress, e.g. 1/2 approvals received
+Overall status: Pending / Approved / Rejected
+Requested by / Maker
+Remarks
+Approve and Reject actions where applicable
+Please make the approval-progress section visually clear without taking too much space in the transaction table. Avoid unnecessary text and avoid making the table look crowded.
+Approval action behavior
+If the current logged-in user is the Maker/initiator of that payment, do not show/allow the Approve action.
+If 2 approvals are required and only 1 approval has been received, the payment should remain Pending.
+Once the required number of different eligible approvers has approved, the payment should become Approved.
+Reject should follow the existing rejection flow.
+Do not change unrelated functionality.
+Important: Please first inspect the existing approval-related components, constants, data structures, and styling in the repository before making changes. Reuse the existing project structure and coding conventions.
+Please implement the UI in a clean, professional corporate-banking style with proper spacing, alignment, readable status indicators, and responsive behavior. The approval information should be easy to understand at a glance and should not make the transaction table congested.
+Before modifying anything, briefly explain what you found in the current implementation and what you plan to change. Then make only the necessary changes.
