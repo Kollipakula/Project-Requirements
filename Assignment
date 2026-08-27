@@ -1,282 +1,35 @@
-I want you to review and validate the backend architecture and database design for our CURRENT Corporate Banking Payment Initiation project.
-
-IMPORTANT:
-- This is the FIRST time I am asking you to review the backend/database design.
-- Do NOT assume any previous design has already been reviewed by you.
-- First inspect the CURRENT repository thoroughly, including both frontend and backend.
-- DO NOT modify any code.
-- DO NOT create, delete, rename, or modify files.
-- DO NOT implement anything.
-- This is ONLY a review and recommendation task.
-
-I have already created a proposed backend folder structure in the project.
-Please inspect the ACTUAL backend folder structure in the repository and review it.
-Do not assume what the structure contains.
-
-I will also provide the latest proposed database structure/document.
-Review that database design against the actual project.
-
-==================================================
-PROJECT CONTEXT
-==================================================
-
-This is a Corporate Banking Payment Initiation application.
-
-The application includes functionality such as:
-- Login / Authentication
-- Dashboard
-- Create Payroll
-- Quick Payment
-- Payment History / Transaction Details
-- Transaction Management
-- Payment Status
-- Accounts
-- Beneficiaries
-- Approval functionality
-- Reports
-- Other existing modules
-
-Do not assume the above list is complete.
-Inspect the actual project and identify the functionality that is already implemented.
-
-==================================================
-BACKEND ARCHITECTURE REVIEW
-==================================================
-
-Inspect the existing backend structure and determine whether it is appropriate for the current project.
-
-We are considering a typical:
-
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-Model/Entity
-
-with DTOs and exception handling where appropriate.
-
-Please review:
-
-- Controllers
-- Services
-- Repositories
-- Models/Entities
-- DTOs
-- Exception handling
-- Configuration
-- application.properties
-- Any existing DAO layer
-- Any interfaces/implementations
-- Existing database-related code
-
-Specifically determine:
-
-1. Is the current backend folder structure suitable?
-2. Are any layers missing?
-3. Are any layers unnecessary?
-4. Is a DAO layer actually required?
-5. Should interfaces and implementations be used anywhere?
-6. Are the existing class responsibilities properly separated?
-7. Is the structure suitable for Spring Boot + JPA?
-8. Are there naming or architectural inconsistencies?
-9. What should be changed before implementation begins?
-
-Do NOT make these changes. Only recommend them.
-
-==================================================
-LATEST SME APPROVAL REQUIREMENT
-==================================================
-
-Treat the following as the latest confirmed business requirement:
-
-- Maximum 2 approval levels.
-- There is NO Level 3 approval.
-- There can be up to 5 eligible approvers.
-- If 1 approval is required, ANY ONE eligible approver can approve.
-- If 2 approvals are required, ANY TWO eligible approvers can approve.
-- The required approval count is determined based on the payment/batch amount.
-- A user can have both Operator and Approver roles.
-- If X creates a payment/batch, X cannot approve that same payment/batch.
-- Viewer is read-only.
-- Viewer cannot create, edit, submit, approve, reject, or modify payment data.
-
-Review whether the backend and database design can support these rules correctly.
-
-==================================================
-CURRENCY REQUIREMENT
-==================================================
-
-The application supports multiple currencies.
-
-There is a common/base currency.
-
-The system should:
-- Store original transaction currency
-- Store original amount
-- Store exchange rate used
-- Convert amount to common currency
-- Display converted amount
-- Preserve the exchange rate and converted amount used for historical transactions
-
-Review whether the current proposed database/backend design supports this properly.
-
-==================================================
-DATABASE REVIEW
-==================================================
-
-Review the database document I provide against the actual project.
-
-Check:
-
-- Required tables
-- Unnecessary tables
-- Duplicate tables
-- Missing tables
-- Primary keys
-- Foreign keys
-- Relationships
-- Normalization
-- One-to-many relationships
-- Saved drafts
-- Payment batches
-- Payment transactions
-- Payroll batches
-- Payroll transactions
-- Approval rules
-- Eligible approvers
-- Approval records
-- User roles
-- Account access
-- Currency conversion
-- Exchange rates
-- Audit/history
-
-Specifically verify:
-
-Payment Batch
-    ↓
-Multiple Payment Transactions
-
-Payroll Batch
-    ↓
-Multiple Payroll Transactions
-
-==================================================
-ROLE REQUIREMENTS
-==================================================
-
-Roles:
-
-OPERATOR
-- Can create/manage payments according to permissions.
-
-APPROVER
-- Can approve eligible payments.
-
-VIEWER
-- Read-only.
-- Cannot create, edit, submit, approve, reject or modify.
-
-A user may have multiple roles.
-
-Verify whether the proposed design supports this correctly.
-
-==================================================
-ACCOUNT BALANCE
-==================================================
-
-The account balance flow is:
-
-User selects "View Balance"
-        ↓
-Password prompt
-        ↓
-Password verification
-        ↓
-Account details displayed
-
-Details include:
-- Account number
-- Account name
-- Account type
-- Currency
-- Balance
-
-Review whether the backend/database design supports this appropriately.
-
-==================================================
-IMPORTANT REVIEW POINT
-==================================================
-
-Do not blindly accept the proposed database design.
-
-If you find a better or simpler approach, explain it.
-
-However, do not introduce unnecessary complexity.
-
-The goal is a practical student/project-level Corporate Banking application using Spring Boot, JPA and the existing frontend.
-
-==================================================
-RESPONSE FORMAT
-==================================================
-
-Please give the review in this format:
-
-A. CURRENT PROJECT ANALYSIS
-- What relevant functionality already exists?
-- What backend/frontend structures already exist?
-
-B. BACKEND ARCHITECTURE REVIEW
-- What is good?
-- What should change?
-- What is missing?
-- Is DAO required?
-- Are interfaces/implementations required?
-- Any unnecessary classes?
-
-C. DATABASE REVIEW
-- What is correct?
-- What should change?
-- What is missing?
-- What is unnecessary?
-
-D. APPROVAL WORKFLOW REVIEW
-Explain whether the design correctly supports:
-- Maximum 2 levels
-- Up to 5 eligible approvers
-- Any 1 approver
-- Any 2 approvers
-- Initiator cannot approve own batch
-
-E. ROLE REVIEW
-Review Operator, Approver and Viewer.
-
-F. CURRENCY REVIEW
-Review multi-currency and common-currency conversion.
-
-G. RELATIONSHIP REVIEW
-Clearly explain the important database relationships.
-
-H. POTENTIAL INTEGRATION ISSUES
-Identify anything that may cause problems when connecting the frontend to the backend later.
-
-I. FINAL RECOMMENDATION
-Give me:
-1. Recommended backend structure
-2. Recommended database table list
-3. Important relationships
-4. Changes to make before implementation
-5. Things that should remain unchanged
-
-If something depends on a business decision that the SME has not clarified, mark it clearly as:
-
-"NEEDS SME CLARIFICATION"
-
-IMPORTANT:
-Do not modify anything.
-Do not create files.
-Do not implement anything.
-
-Only inspect, analyze and recommend.
+As of now, we have only created the backend folder structure and have not started the backend implementation yet. Before we start implementing the backend, we want to finalize the database schema for the entire project because different team members will be working on different components and there will be relationships between them.
+
+I have attached/provided our current DB Schema PDF. Please review the complete database schema against the existing frontend implementation in this repository.
+
+Please check:
+
+Whether all frontend features/components are properly supported by the database.
+Whether all required tables, columns, primary keys and foreign keys are present.
+Whether the relationships between tables are correct (especially one-to-many relationships such as batch → transactions/payments).
+Whether the schema correctly supports our payment and payroll flows.
+Whether it supports saved drafts.
+Whether it supports currency and currency conversion requirements.
+Whether it supports our three roles: Operator, Approver and Viewer.
+Operator can create/edit payments.
+Approver can approve payments.
+Viewer can only view/read and cannot create, edit or approve.
+Our approval requirement has now been clarified by the SME:
+The number of approval levels depends on the payment amount.
+We can have a maximum of two approval levels.
+We can have around five approvers, and for a payment requiring two approvals, any two eligible approvers can approve.
+For a payment requiring one approval, any one eligible approver can approve.
+A user can be both Operator and Approver, but the person who initiated a particular payment/batch cannot approve that same payment/batch.
+
+Also verify whether the database design can correctly determine which users are eligible to approve a particular payment without unnecessarily making the design complex.
+
+Important: Do not modify or generate implementation code yet. This is only a database and architecture review. Please give me:
+
+What is already correct.
+What needs to be changed.
+Any missing tables/columns/relationships.
+Any unnecessary tables or over-complex design.
+Your recommended final database structure.
+A clear table-by-table explanation of the changes.
+
+Please base your review on the actual files in this repository, especially the existing frontend implementation and the DB Schema PDF, rather than making assumptions.
