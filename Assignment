@@ -1,350 +1,282 @@
-[
-  {
-    "id": 1,
-    "firstName": "Sundar",
-    "lastName": "Pichai",
-    "email": "sundar.pichai@google.com"
-  },
-  {
-    "id": 2,
-    "firstName": "Satya",
-    "lastName": "Nadella",
-    "email": "satya.nadella@microsoft.com"
-  },
-  {
-    "id": 3,
-    "firstName": "Jeff",
-    "lastName": "Bezos",
-    "email": "jeff.bezos@amazon.com"
-  },
-  {
-    "id": 4,
-    "firstName": "Sergey",
-    "lastName": "Brin",
-    "email": "sergey.brin@google.com"
-  },
-  {
-    "id": 5,
-    "firstName": "Larry",
-    "lastName": "Page",
-    "email": "larry.page@google.com"
-  }
-]
----------------------
-import { useState } from "react";
-import customersData from "./customers.json";
+I want you to review and validate the backend architecture and database design for our CURRENT Corporate Banking Payment Initiation project.
+
+IMPORTANT:
+- This is the FIRST time I am asking you to review the backend/database design.
+- Do NOT assume any previous design has already been reviewed by you.
+- First inspect the CURRENT repository thoroughly, including both frontend and backend.
+- DO NOT modify any code.
+- DO NOT create, delete, rename, or modify files.
+- DO NOT implement anything.
+- This is ONLY a review and recommendation task.
+
+I have already created a proposed backend folder structure in the project.
+Please inspect the ACTUAL backend folder structure in the repository and review it.
+Do not assume what the structure contains.
+
+I will also provide the latest proposed database structure/document.
+Review that database design against the actual project.
+
+==================================================
+PROJECT CONTEXT
+==================================================
+
+This is a Corporate Banking Payment Initiation application.
+
+The application includes functionality such as:
+- Login / Authentication
+- Dashboard
+- Create Payroll
+- Quick Payment
+- Payment History / Transaction Details
+- Transaction Management
+- Payment Status
+- Accounts
+- Beneficiaries
+- Approval functionality
+- Reports
+- Other existing modules
+
+Do not assume the above list is complete.
+Inspect the actual project and identify the functionality that is already implemented.
+
+==================================================
+BACKEND ARCHITECTURE REVIEW
+==================================================
+
+Inspect the existing backend structure and determine whether it is appropriate for the current project.
+
+We are considering a typical:
+
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Model/Entity
+
+with DTOs and exception handling where appropriate.
+
+Please review:
+
+- Controllers
+- Services
+- Repositories
+- Models/Entities
+- DTOs
+- Exception handling
+- Configuration
+- application.properties
+- Any existing DAO layer
+- Any interfaces/implementations
+- Existing database-related code
+
+Specifically determine:
+
+1. Is the current backend folder structure suitable?
+2. Are any layers missing?
+3. Are any layers unnecessary?
+4. Is a DAO layer actually required?
+5. Should interfaces and implementations be used anywhere?
+6. Are the existing class responsibilities properly separated?
+7. Is the structure suitable for Spring Boot + JPA?
+8. Are there naming or architectural inconsistencies?
+9. What should be changed before implementation begins?
+
+Do NOT make these changes. Only recommend them.
+
+==================================================
+LATEST SME APPROVAL REQUIREMENT
+==================================================
+
+Treat the following as the latest confirmed business requirement:
+
+- Maximum 2 approval levels.
+- There is NO Level 3 approval.
+- There can be up to 5 eligible approvers.
+- If 1 approval is required, ANY ONE eligible approver can approve.
+- If 2 approvals are required, ANY TWO eligible approvers can approve.
+- The required approval count is determined based on the payment/batch amount.
+- A user can have both Operator and Approver roles.
+- If X creates a payment/batch, X cannot approve that same payment/batch.
+- Viewer is read-only.
+- Viewer cannot create, edit, submit, approve, reject, or modify payment data.
+
+Review whether the backend and database design can support these rules correctly.
+
+==================================================
+CURRENCY REQUIREMENT
+==================================================
+
+The application supports multiple currencies.
+
+There is a common/base currency.
+
+The system should:
+- Store original transaction currency
+- Store original amount
+- Store exchange rate used
+- Convert amount to common currency
+- Display converted amount
+- Preserve the exchange rate and converted amount used for historical transactions
 
-import CustomerList from "./components/customers/CustomerList";
-import CustomerForm from "./components/customers/CustomerForm";
-import CustomerDetails from "./components/customers/CustomerDetails";
+Review whether the current proposed database/backend design supports this properly.
 
-function App() {
+==================================================
+DATABASE REVIEW
+==================================================
 
-  const [customers, setCustomers] = useState(customersData);
+Review the database document I provide against the actual project.
 
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+Check:
 
-  function addCustomer(newCustomer) {
-    setCustomers([...customers, newCustomer]);
-  }
+- Required tables
+- Unnecessary tables
+- Duplicate tables
+- Missing tables
+- Primary keys
+- Foreign keys
+- Relationships
+- Normalization
+- One-to-many relationships
+- Saved drafts
+- Payment batches
+- Payment transactions
+- Payroll batches
+- Payroll transactions
+- Approval rules
+- Eligible approvers
+- Approval records
+- User roles
+- Account access
+- Currency conversion
+- Exchange rates
+- Audit/history
+
+Specifically verify:
+
+Payment Batch
+    ↓
+Multiple Payment Transactions
+
+Payroll Batch
+    ↓
+Multiple Payroll Transactions
 
-  function selectCustomer(customer) {
-    setSelectedCustomer(customer);
-  }
+==================================================
+ROLE REQUIREMENTS
+==================================================
+
+Roles:
+
+OPERATOR
+- Can create/manage payments according to permissions.
+
+APPROVER
+- Can approve eligible payments.
 
-  return (
-    <div>
-      <h1>Customers</h1>
-
-      <CustomerList
-        customers={customers}
-        selectCustomer={selectCustomer}
-      />
-
-      <div style={{ display: "flex", gap: "100px" }}>
-
-        <CustomerForm addCustomer={addCustomer} />
-
-        <CustomerDetails customer={selectedCustomer} />
-
-      </div>
-
-    </div>
-  );
-}
-
-export default App;
-
-
-
-----------------------------------------------
-
-function CustomerList({ customers, selectCustomer }) {
-
-  return (
-    <div>
-
-      <h2>Customer List</h2>
-
-      <table border="1">
-
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {customers.map((customer) => (
-
-            <tr
-              key={customer.id}
-              onClick={() => selectCustomer(customer)}
-            >
-              <td>{customer.id}</td>
-              <td>{customer.firstName}</td>
-              <td>{customer.lastName}</td>
-              <td>{customer.email}</td>
-            </tr>
-
-          ))}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  );
-}
-
-export default CustomerList;
-
-
-------------------------------------------------------------------------------------------------------------------
-import { useState } from "react";
-
-function CustomerForm({ addCustomer }) {
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-
-  function handleSubmit(event) {
-
-    event.preventDefault();
-
-    const newCustomer = {
-      id: Date.now(),
-      firstName: firstName,
-      lastName: lastName,
-      email: email
-    };
-
-    addCustomer(newCustomer);
-
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-  }
-
-  return (
-    <div>
-
-      <h2>Add Customer</h2>
-
-      <form onSubmit={handleSubmit}>
-
-        <div>
-          <label>First Name</label>
-          <input
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Last Name</label>
-          <input
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-        </div>
-
-        <br />
-
-        <div>
-          <label>Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">
-          Submit
-        </button>
-
-      </form>
-
-    </div>
-  );
-}
-
-export default CustomerForm;
-
-
-
-
-
-
-
---------------------------------------------------------------------------------------------------------
-function CustomerDetails({ customer }) {
-
-  return (
-    <div>
-
-      <h2>Customer Details</h2>
-
-      {customer ? (
-        <div>
-          <p>ID: {customer.id}</p>
-          <p>First Name: {customer.firstName}</p>
-          <p>Last Name: {customer.lastName}</p>
-          <p>Email: {customer.email}</p>
-        </div>
-      ) : (
-        <p>Select a customer</p>
-      )}
-
-    </div>
-  );
-}
-
-export default CustomerDetails;
---------------------------------------------------------------------------------------------------------------------------
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-}
-
-.container {
-  margin-left: 100px;
-  margin-right: 100px;
-  padding: 30px;
-}
-
-h1 {
-  text-align: center;
-}
-
-.customer-list {
-  background-color: white;
-  padding: 20px;
-  margin-bottom: 40px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-th {
-  background-color: #eeeeee;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-.bottom-section {
-  display: flex;
-  justify-content: space-between;
-  gap: 100px;
-}
-
-.customer-form,
-.customer-details {
-  background-color: white;
-  padding: 25px;
-  width: 50%;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-input {
-  width: 90%;
-  padding: 8px;
-}
-
-button {
-  padding: 10px 25px;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-----------------------------------------------------------------------------------------------------
-return (
-  <div className="container">
-
-    <h1>Customers</h1>
-
-    <div className="customer-list">
-      <CustomerList
-        customers={customers}
-        selectCustomer={selectCustomer}
-      />
-    </div>
-
-    <div className="bottom-section">
-
-      <div className="customer-form">
-        <CustomerForm addCustomer={addCustomer} />
-      </div>
-
-      <div className="customer-details">
-        <CustomerDetails customer={selectedCustomer} />
-      </div>
-
-    </div>
-
-  </div>
-);
-
------------------------------------------------------------------------------------------------------------
-<div className="form-group">
-  <label>First Name</label>
-  <input
-    value={firstName}
-    onChange={(e) => setFirstName(e.target.value)}
-  />
-</div>
-button:hover {
-  background-color: #125aa0;
-}
+VIEWER
+- Read-only.
+- Cannot create, edit, submit, approve, reject or modify.
+
+A user may have multiple roles.
+
+Verify whether the proposed design supports this correctly.
+
+==================================================
+ACCOUNT BALANCE
+==================================================
+
+The account balance flow is:
+
+User selects "View Balance"
+        ↓
+Password prompt
+        ↓
+Password verification
+        ↓
+Account details displayed
+
+Details include:
+- Account number
+- Account name
+- Account type
+- Currency
+- Balance
+
+Review whether the backend/database design supports this appropriately.
+
+==================================================
+IMPORTANT REVIEW POINT
+==================================================
+
+Do not blindly accept the proposed database design.
+
+If you find a better or simpler approach, explain it.
+
+However, do not introduce unnecessary complexity.
+
+The goal is a practical student/project-level Corporate Banking application using Spring Boot, JPA and the existing frontend.
+
+==================================================
+RESPONSE FORMAT
+==================================================
+
+Please give the review in this format:
+
+A. CURRENT PROJECT ANALYSIS
+- What relevant functionality already exists?
+- What backend/frontend structures already exist?
+
+B. BACKEND ARCHITECTURE REVIEW
+- What is good?
+- What should change?
+- What is missing?
+- Is DAO required?
+- Are interfaces/implementations required?
+- Any unnecessary classes?
+
+C. DATABASE REVIEW
+- What is correct?
+- What should change?
+- What is missing?
+- What is unnecessary?
+
+D. APPROVAL WORKFLOW REVIEW
+Explain whether the design correctly supports:
+- Maximum 2 levels
+- Up to 5 eligible approvers
+- Any 1 approver
+- Any 2 approvers
+- Initiator cannot approve own batch
+
+E. ROLE REVIEW
+Review Operator, Approver and Viewer.
+
+F. CURRENCY REVIEW
+Review multi-currency and common-currency conversion.
+
+G. RELATIONSHIP REVIEW
+Clearly explain the important database relationships.
+
+H. POTENTIAL INTEGRATION ISSUES
+Identify anything that may cause problems when connecting the frontend to the backend later.
+
+I. FINAL RECOMMENDATION
+Give me:
+1. Recommended backend structure
+2. Recommended database table list
+3. Important relationships
+4. Changes to make before implementation
+5. Things that should remain unchanged
+
+If something depends on a business decision that the SME has not clarified, mark it clearly as:
+
+"NEEDS SME CLARIFICATION"
+
+IMPORTANT:
+Do not modify anything.
+Do not create files.
+Do not implement anything.
+
+Only inspect, analyze and recommend.
