@@ -1,35 +1,943 @@
-As of now, we have only created the backend folder structure and have not started the backend implementation yet. Before we start implementing the backend, we want to finalize the database schema for the entire project because different team members will be working on different components and there will be relationships between them.
+DATABASE SCHEMA - CORPORATE BANKING PAYMENT INITIATION PROJECT
 
-I have attached/provided our current DB Schema PDF. Please review the complete database schema against the existing frontend implementation in this repository.
+Purpose:
+This database supports a corporate banking payment initiation system with:
+- User login and roles
+- Operator, Approver and Viewer roles
+- Accounts
+- Beneficiaries
+- Single payments
+- Payment batches
+- Payroll batches
+- Payment/transaction rows
+- Saved drafts
+- Approval workflow
+- Two-level approval
+- Currency conversion
+- Transaction status/history
+- Notifications
+- Audit logging
+- Password verification/security
 
-Please check:
 
-Whether all frontend features/components are properly supported by the database.
-Whether all required tables, columns, primary keys and foreign keys are present.
-Whether the relationships between tables are correct (especially one-to-many relationships such as batch → transactions/payments).
-Whether the schema correctly supports our payment and payroll flows.
-Whether it supports saved drafts.
-Whether it supports currency and currency conversion requirements.
-Whether it supports our three roles: Operator, Approver and Viewer.
-Operator can create/edit payments.
-Approver can approve payments.
-Viewer can only view/read and cannot create, edit or approve.
-Our approval requirement has now been clarified by the SME:
-The number of approval levels depends on the payment amount.
-We can have a maximum of two approval levels.
-We can have around five approvers, and for a payment requiring two approvals, any two eligible approvers can approve.
-For a payment requiring one approval, any one eligible approver can approve.
-A user can be both Operator and Approver, but the person who initiated a particular payment/batch cannot approve that same payment/batch.
+========================================================
+1. USERS
+========================================================
 
-Also verify whether the database design can correctly determine which users are eligible to approve a particular payment without unnecessarily making the design complex.
+Table: users
 
-Important: Do not modify or generate implementation code yet. This is only a database and architecture review. Please give me:
+Columns:
+- user_id              BIGINT          PRIMARY KEY
+- username             VARCHAR(100)    UNIQUE NOT NULL
+- password_hash        VARCHAR(255)    NOT NULL
+- first_name           VARCHAR(100)    NOT NULL
+- last_name            VARCHAR(100)
+- email                VARCHAR(150)    UNIQUE NOT NULL
+- phone_number         VARCHAR(20)
+- status               VARCHAR(20)     NOT NULL
+- created_at           TIMESTAMP
+- updated_at           TIMESTAMP
 
-What is already correct.
-What needs to be changed.
-Any missing tables/columns/relationships.
-Any unnecessary tables or over-complex design.
-Your recommended final database structure.
-A clear table-by-table explanation of the changes.
+Purpose:
+Stores all corporate banking users.
 
-Please base your review on the actual files in this repository, especially the existing frontend implementation and the DB Schema PDF, rather than making assumptions.
+A user can have one or more roles through USER_ROLES.
+
+A user can be:
+- Operator
+- Approver
+- Viewer
+
+A user can also have both Operator and Approver roles.
+
+
+========================================================
+2. ROLES
+========================================================
+
+Table: roles
+
+Columns:
+- role_id              BIGINT          PRIMARY KEY
+- role_name            VARCHAR(50)     UNIQUE NOT NULL
+- description          VARCHAR(255)
+
+Initial roles:
+- OPERATOR
+- APPROVER
+- VIEWER
+
+Purpose:
+Stores available system roles.
+
+
+========================================================
+3. USER_ROLES
+========================================================
+
+Table: user_roles
+
+Columns:
+- user_id              BIGINT          NOT NULL
+- role_id              BIGINT          NOT NULL
+
+Primary Key:
+- (user_id, role_id)
+
+Foreign Keys:
+- user_id -> users.user_id
+- role_id -> roles.role_id
+
+Purpose:
+Many-to-many relationship between users and roles.
+
+Example:
+
+User X:
+- OPERATOR
+- APPROVER
+
+User Y:
+- OPERATOR
+
+User Z:
+- VIEWER
+
+
+========================================================
+4. ACCOUNTS
+========================================================
+
+Table: accounts
+
+Columns:
+- account_id           BIGINT          PRIMARY KEY
+- account_number       VARCHAR(50)     UNIQUE NOT NULL
+- account_name         VARCHAR(150)
+- currency_code        VARCHAR(10)     NOT NULL
+- available_balance    DECIMAL(18,2)   NOT NULL
+- account_type         VARCHAR(50)
+- status               VARCHAR(20)
+- created_at           TIMESTAMP
+- updated_at           TIMESTAMP
+
+Foreign Key:
+- currency_code -> currencies.currency_code
+
+Purpose:
+Stores corporate accounts from which payments can be initiated.
+
+
+========================================================
+5. BENEFICIARIES
+========================================================
+
+Table: beneficiaries
+
+Columns:
+- beneficiary_id       BIGINT          PRIMARY KEY
+- beneficiary_name     VARCHAR(150)    NOT NULL
+- account_number       VARCHAR(50)     NOT NULL
+- bank_name            VARCHAR(150)
+- bank_code            VARCHAR(50)
+- currency_code        VARCHAR(10)
+- status               VARCHAR(20)
+- created_by            BIGINT
+- created_at            TIMESTAMP
+- updated_at            TIMESTAMP
+
+Foreign Keys:
+- currency_code -> currencies.currency_code
+- created_by -> users.user_id
+
+Purpose:
+Stores beneficiaries/payees to whom payments can be made.
+
+
+========================================================
+6. CURRENCIES
+========================================================
+
+Table: currencies
+
+Columns:
+- currency_code        VARCHAR(10)     PRIMARY KEY
+- currency_name        VARCHAR(100)    NOT NULL
+- symbol               VARCHAR(10)
+- is_active             BOOLEAN         NOT NULL
+
+Examples:
+- INR
+- USD
+- EUR
+- GBP
+
+Purpose:
+Stores supported currencies.
+
+One common/base currency can be configured for the system.
+
+
+========================================================
+7. EXCHANGE_RATES
+========================================================
+
+Table: exchange_rates
+
+Columns:
+- exchange_rate_id     BIGINT          PRIMARY KEY
+- from_currency        VARCHAR(10)     NOT NULL
+- to_currency          VARCHAR(10)     NOT NULL
+- exchange_rate         DECIMAL(18,8)   NOT NULL
+- effective_from        TIMESTAMP       NOT NULL
+- effective_to          TIMESTAMP
+- created_at            TIMESTAMP
+
+Foreign Keys:
+- from_currency -> currencies.currency_code
+- to_currency -> currencies.currency_code
+
+Purpose:
+Stores currency conversion rates.
+
+Example:
+
+USD -> INR = 88.50
+EUR -> INR = 103.20
+
+If a payment is created in USD, the system can calculate its equivalent
+amount in the common/base currency for approval-level determination
+and dashboard/reporting purposes.
+
+
+========================================================
+8. PAYMENT_BATCHES
+========================================================
+
+Table: payment_batches
+
+Columns:
+- batch_id              BIGINT          PRIMARY KEY
+- batch_reference       VARCHAR(100)    UNIQUE NOT NULL
+- batch_type             VARCHAR(30)     NOT NULL
+- source_account_id      BIGINT          NOT NULL
+- source_currency_code   VARCHAR(10)     NOT NULL
+- total_amount           DECIMAL(18,2)
+- base_currency_amount   DECIMAL(18,2)
+- transaction_count      INT
+- created_by             BIGINT          NOT NULL
+- status                 VARCHAR(30)     NOT NULL
+- required_approval_level INT
+- created_at             TIMESTAMP
+- updated_at             TIMESTAMP
+
+Foreign Keys:
+- source_account_id -> accounts.account_id
+- source_currency_code -> currencies.currency_code
+- created_by -> users.user_id
+
+Possible batch_type values:
+- SINGLE_PAYMENT
+- BULK_PAYMENT
+- PAYROLL
+
+Possible status values:
+- DRAFT
+- SUBMITTED
+- PENDING_APPROVAL
+- PARTIALLY_APPROVED
+- APPROVED
+- REJECTED
+- PROCESSING
+- COMPLETED
+- FAILED
+- CANCELLED
+
+Purpose:
+Represents the main payment batch.
+
+One batch can contain many transaction rows.
+
+
+========================================================
+9. PAYMENT_TRANSACTIONS
+========================================================
+
+Table: payment_transactions
+
+Columns:
+- transaction_id       BIGINT          PRIMARY KEY
+- batch_id             BIGINT          NOT NULL
+- beneficiary_id       BIGINT
+- beneficiary_name     VARCHAR(150)
+- beneficiary_account  VARCHAR(50)
+- amount                DECIMAL(18,2)   NOT NULL
+- currency_code         VARCHAR(10)     NOT NULL
+- base_currency_amount  DECIMAL(18,2)
+- exchange_rate         DECIMAL(18,8)
+- payment_reference     VARCHAR(100)
+- remarks               VARCHAR(255)
+- transaction_status    VARCHAR(30)
+- is_draft              BOOLEAN
+- created_at            TIMESTAMP
+- updated_at            TIMESTAMP
+
+Foreign Keys:
+- batch_id -> payment_batches.batch_id
+- beneficiary_id -> beneficiaries.beneficiary_id
+- currency_code -> currencies.currency_code
+
+Relationship:
+- ONE payment_batch -> MANY payment_transactions
+
+Purpose:
+Stores individual payment/transaction rows inside a batch.
+
+Saved drafts can be represented using:
+- batch status = DRAFT
+- transaction is_draft = TRUE
+
+This avoids creating an unnecessary separate Draft table.
+
+
+========================================================
+10. PAYROLL_EMPLOYEES
+========================================================
+
+Table: payroll_employees
+
+Columns:
+- payroll_employee_id   BIGINT          PRIMARY KEY
+- employee_code         VARCHAR(50)
+- employee_name         VARCHAR(150)    NOT NULL
+- account_number        VARCHAR(50)     NOT NULL
+- bank_name             VARCHAR(150)
+- currency_code         VARCHAR(10)
+- status                VARCHAR(20)
+- created_at            TIMESTAMP
+- updated_at            TIMESTAMP
+
+Foreign Key:
+- currency_code -> currencies.currency_code
+
+Purpose:
+Stores employees/payees used for payroll payments.
+
+This allows payroll data to be maintained separately from general
+beneficiaries when required by the payroll functionality.
+
+
+========================================================
+11. PAYROLL_BATCHES
+========================================================
+
+Table: payroll_batches
+
+Columns:
+- payroll_batch_id      BIGINT          PRIMARY KEY
+- batch_id              BIGINT          UNIQUE NOT NULL
+- payroll_period        VARCHAR(50)
+- employee_count        INT
+- total_payroll_amount  DECIMAL(18,2)
+- base_currency_amount  DECIMAL(18,2)
+- created_by             BIGINT          NOT NULL
+- status                 VARCHAR(30)
+- created_at             TIMESTAMP
+- updated_at             TIMESTAMP
+
+Foreign Keys:
+- batch_id -> payment_batches.batch_id
+- created_by -> users.user_id
+
+Purpose:
+Stores payroll-specific information.
+
+A payroll batch is also represented in PAYMENT_BATCHES, while this
+table stores payroll-specific details.
+
+
+========================================================
+12. APPROVAL_RULES
+========================================================
+
+Table: approval_rules
+
+Columns:
+- approval_rule_id       BIGINT          PRIMARY KEY
+- min_amount             DECIMAL(18,2)   NOT NULL
+- max_amount             DECIMAL(18,2)
+- required_approval_level INT            NOT NULL
+- is_active              BOOLEAN         NOT NULL
+- created_at             TIMESTAMP
+- updated_at             TIMESTAMP
+
+Example:
+
+Rule 1:
+0 - 10,000
+required_approval_level = 1
+
+Rule 2:
+10,001 - 50,000
+required_approval_level = 2
+
+Rule 3:
+Above 50,000
+required_approval_level = 2
+
+IMPORTANT:
+The actual amount ranges are configurable according to business
+requirements.
+
+The database should NOT hard-code the amount ranges in application code
+if they are expected to change.
+
+
+========================================================
+13. APPROVAL_ELIGIBLE_USERS
+========================================================
+
+Table: approval_eligible_users
+
+Columns:
+- approval_eligible_id   BIGINT          PRIMARY KEY
+- user_id                BIGINT          NOT NULL
+- is_active              BOOLEAN         NOT NULL
+- created_at             TIMESTAMP
+- updated_at             TIMESTAMP
+
+Foreign Key:
+- user_id -> users.user_id
+
+Purpose:
+Stores users who are eligible to act as approvers.
+
+Example:
+
+There may be 5 eligible approvers:
+
+A
+B
+C
+D
+E
+
+If a batch requires one approval:
+- Any one of A/B/C/D/E can approve.
+
+If a batch requires two approvals:
+- Any two different users from A/B/C/D/E can approve.
+
+The user who initiated the batch is excluded during approval processing.
+
+
+========================================================
+14. APPROVALS
+========================================================
+
+Table: approvals
+
+Columns:
+- approval_id           BIGINT          PRIMARY KEY
+- batch_id              BIGINT          NOT NULL
+- approver_user_id      BIGINT          NOT NULL
+- approval_level        INT             NOT NULL
+- approval_status       VARCHAR(30)     NOT NULL
+- action_at              TIMESTAMP
+- comments               VARCHAR(500)
+
+Foreign Keys:
+- batch_id -> payment_batches.batch_id
+- approver_user_id -> users.user_id
+
+Possible approval_status values:
+- PENDING
+- APPROVED
+- REJECTED
+
+Purpose:
+Stores every approval action for a payment batch.
+
+Example for a 2-approval batch:
+
+Batch 1001
+Required approvals = 2
+
+A -> APPROVED
+C -> APPROVED
+
+Once two eligible different approvers approve,
+the batch can move to APPROVED.
+
+The person who created Batch 1001 cannot approve it.
+
+
+========================================================
+15. TRANSACTION_STATUS_HISTORY
+========================================================
+
+Table: transaction_status_history
+
+Columns:
+- history_id             BIGINT          PRIMARY KEY
+- batch_id               BIGINT          NOT NULL
+- old_status             VARCHAR(30)
+- new_status             VARCHAR(30)     NOT NULL
+- changed_by              BIGINT
+- changed_at              TIMESTAMP
+- remarks                 VARCHAR(500)
+
+Foreign Keys:
+- batch_id -> payment_batches.batch_id
+- changed_by -> users.user_id
+
+Purpose:
+Maintains the history of status changes.
+
+Example:
+
+DRAFT
+   ↓
+SUBMITTED
+   ↓
+PENDING_APPROVAL
+   ↓
+PARTIALLY_APPROVED
+   ↓
+APPROVED
+   ↓
+PROCESSING
+   ↓
+COMPLETED
+
+
+========================================================
+16. NOTIFICATIONS
+========================================================
+
+Table: notifications
+
+Columns:
+- notification_id        BIGINT          PRIMARY KEY
+- user_id                BIGINT          NOT NULL
+- batch_id               BIGINT
+- notification_type      VARCHAR(50)
+- message                VARCHAR(500)
+- is_read                BOOLEAN
+- created_at             TIMESTAMP
+- read_at                TIMESTAMP
+
+Foreign Keys:
+- user_id -> users.user_id
+- batch_id -> payment_batches.batch_id
+
+Purpose:
+Stores notifications for users.
+
+Examples:
+- Payment requires approval
+- Payment approved
+- Payment rejected
+- Payroll submitted
+- Payment completed
+
+
+========================================================
+17. AUDIT_LOGS
+========================================================
+
+Table: audit_logs
+
+Columns:
+- audit_id               BIGINT          PRIMARY KEY
+- user_id                BIGINT
+- action                  VARCHAR(100)    NOT NULL
+- entity_type             VARCHAR(50)
+- entity_id               BIGINT
+- old_value               TEXT
+- new_value               TEXT
+- action_timestamp        TIMESTAMP       NOT NULL
+- ip_address              VARCHAR(50)
+
+Foreign Key:
+- user_id -> users.user_id
+
+Purpose:
+Maintains an audit trail of important user/system actions.
+
+Examples:
+- User logged in
+- Payment created
+- Payment edited
+- Batch submitted
+- Payment approved
+- Payment rejected
+- Beneficiary created
+
+
+========================================================
+18. PASSWORD_VERIFICATION
+========================================================
+
+Table: password_verification
+
+Columns:
+- verification_id        BIGINT          PRIMARY KEY
+- user_id                BIGINT          NOT NULL
+- verification_type      VARCHAR(50)
+- verification_status    VARCHAR(30)
+- verified_at             TIMESTAMP
+- expires_at              TIMESTAMP
+
+Foreign Key:
+- user_id -> users.user_id
+
+Purpose:
+Supports additional password/security verification when required for
+sensitive payment actions.
+
+
+========================================================
+19. REPORTS
+========================================================
+
+Table: reports
+
+Columns:
+- report_id               BIGINT          PRIMARY KEY
+- report_type             VARCHAR(50)     NOT NULL
+- generated_by             BIGINT
+- from_date               TIMESTAMP
+- to_date                 TIMESTAMP
+- currency_code            VARCHAR(10)
+- file_reference           VARCHAR(255)
+- created_at               TIMESTAMP
+
+Foreign Keys:
+- generated_by -> users.user_id
+- currency_code -> currencies.currency_code
+
+Purpose:
+Stores report-generation information/reference.
+
+Reports can use payment_batches, payment_transactions,
+approvals and status history as their source data.
+
+
+========================================================
+RELATIONSHIPS
+========================================================
+
+1. USERS -> USER_ROLES
+   One user can have many roles.
+
+2. ROLES -> USER_ROLES
+   One role can belong to many users.
+
+3. ACCOUNTS -> PAYMENT_BATCHES
+   One account can be the source account for many payment batches.
+
+4. PAYMENT_BATCHES -> PAYMENT_TRANSACTIONS
+   ONE batch can contain MANY transaction rows.
+
+5. BENEFICIARIES -> PAYMENT_TRANSACTIONS
+   One beneficiary can be used in many payment transactions.
+
+6. CURRENCIES -> ACCOUNTS
+   One currency can be used by many accounts.
+
+7. CURRENCIES -> PAYMENT_TRANSACTIONS
+   One currency can be used by many transactions.
+
+8. CURRENCIES -> EXCHANGE_RATES
+   Currency participates in many exchange-rate records.
+
+9. PAYMENT_BATCHES -> PAYROLL_BATCHES
+   A payroll batch is associated with one payment batch.
+
+10. PAYMENT_BATCHES -> APPROVALS
+    One payment batch can have multiple approval records.
+
+11. USERS -> APPROVALS
+    One approver can approve many payment batches.
+
+12. USERS -> PAYMENT_BATCHES
+    One user can create many payment batches.
+
+13. APPROVAL_RULES
+    Determines the number of approval levels based on amount.
+
+14. APPROVAL_ELIGIBLE_USERS
+    Determines which users are eligible to approve.
+
+15. PAYMENT_BATCHES -> TRANSACTION_STATUS_HISTORY
+    One batch can have many status-history records.
+
+16. USERS -> NOTIFICATIONS
+    One user can receive many notifications.
+
+17. USERS -> AUDIT_LOGS
+    One user can generate many audit-log records.
+
+18. USERS -> PASSWORD_VERIFICATION
+    One user can have many verification records.
+
+19. USERS -> REPORTS
+    One user can generate many reports.
+
+
+========================================================
+APPROVAL FLOW
+========================================================
+
+Example 1:
+
+Payment amount = 5,000
+
+Approval rule:
+required_approval_level = 1
+
+Eligible approvers:
+A, B, C, D, E
+
+If X created the payment:
+
+X = Operator + Approver
+
+X CANNOT approve his own payment.
+
+Any ONE of A/B/C/D/E (except the initiator) can approve.
+
+Example:
+C approves
+
+Payment becomes APPROVED.
+
+
+--------------------------------------------------------
+
+Example 2:
+
+Payment amount = 30,000
+
+Approval rule:
+required_approval_level = 2
+
+Eligible approvers:
+A, B, C, D, E
+
+If X created the payment:
+
+X cannot approve.
+
+Any TWO DIFFERENT eligible approvers can approve.
+
+Example:
+A approves
+D approves
+
+Required approvals = 2
+
+Payment becomes APPROVED.
+
+
+========================================================
+IMPORTANT APPROVAL BUSINESS RULE
+========================================================
+
+The system should NOT permanently assign:
+
+Level 1 -> Person X
+Level 2 -> Person Y
+
+Instead:
+
+1. Determine the required approval level from payment amount.
+2. Get the active eligible approvers.
+3. Remove the payment/batch initiator from the eligible list.
+4. Allow any eligible approver to approve.
+5. Prevent the same approver from approving twice.
+6. For one-level approval:
+      one valid approval is enough.
+7. For two-level approval:
+      two different valid approvals are required.
+
+
+========================================================
+ROLE BEHAVIOUR
+========================================================
+
+OPERATOR:
+- Can create payments.
+- Can edit payments/drafts.
+- Can submit payments.
+- Cannot approve a payment that they initiated.
+- May also have APPROVER role.
+
+APPROVER:
+- Can view payments requiring approval.
+- Can approve eligible payments.
+- Can reject payments.
+- Cannot approve a payment they initiated themselves.
+
+VIEWER:
+- Read-only.
+- Can view dashboard.
+- Can view accounts.
+- Can view transactions/payments.
+- Can view reports.
+- Cannot create.
+- Cannot edit.
+- Cannot submit.
+- Cannot approve.
+- Cannot reject.
+
+
+========================================================
+CURRENCY CONVERSION
+========================================================
+
+Every transaction stores:
+
+- Original amount
+- Original currency
+- Exchange rate
+- Base/common currency amount
+
+Example:
+
+Transaction:
+Amount = 1,000 USD
+
+Exchange rate:
+USD -> INR = 88.50
+
+Base currency amount:
+1,000 * 88.50 = 88,500 INR
+
+The base currency amount can be used for:
+- Approval-rule calculation
+- Dashboard totals
+- Reports
+- Consolidated payment totals
+
+The actual original transaction amount and currency must also be
+preserved.
+
+
+========================================================
+DRAFT FLOW
+========================================================
+
+A user can save a payment as a draft.
+
+Example:
+
+PAYMENT_BATCHES.status = DRAFT
+
+Transactions belonging to that batch can have:
+
+PAYMENT_TRANSACTIONS.is_draft = TRUE
+
+When the user submits the batch:
+
+PAYMENT_BATCHES.status:
+DRAFT -> SUBMITTED
+or
+DRAFT -> PENDING_APPROVAL
+
+The same transaction/batch data is reused.
+
+A separate SAVED_DRAFT table is not required unless the business
+requirements later specifically demand it.
+
+
+========================================================
+MAIN PAYMENT FLOW
+========================================================
+
+1. Operator logs in.
+
+2. Operator selects source account.
+
+3. Operator creates payment batch.
+
+4. Operator adds one or more transaction rows.
+
+5. Currency conversion is calculated where required.
+
+6. Payment can be saved as DRAFT.
+
+7. Operator submits the batch.
+
+8. System calculates the total/base-currency amount.
+
+9. System checks APPROVAL_RULES.
+
+10. System determines:
+       1 approval OR
+       2 approvals.
+
+11. System gets eligible approvers.
+
+12. Initiator is excluded from eligible approvers.
+
+13. Eligible approvers receive notification.
+
+14. Approver approves/rejects.
+
+15. Approval record is inserted into APPROVALS.
+
+16. Once required approvals are completed:
+       batch status = APPROVED
+
+17. Payment proceeds to processing.
+
+18. Status history and audit logs are created throughout the process.
+
+
+========================================================
+IMPORTANT DESIGN PRINCIPLE
+========================================================
+
+The database should remain simple.
+
+Do NOT create separate tables for every role or every approval level.
+
+The same USERS table is used for:
+- Operators
+- Approvers
+- Viewers
+
+USER_ROLES determines the user's roles.
+
+APPROVAL_ELIGIBLE_USERS determines who can act as an approver.
+
+APPROVAL_RULES determines how many approvals are required.
+
+APPROVALS records who actually approved the batch.
+
+PAYMENT_BATCHES stores the payment/batch-level information.
+
+PAYMENT_TRANSACTIONS stores the individual transaction rows.
+
+This keeps the design flexible without unnecessarily creating
+separate Level-1, Level-2 and Level-3 user tables.
+
+Now compare this proposed schema with the actual frontend code in this repository.
+
+Do not assume that this schema is correct just because it is provided here.
+
+Identify:
+1. Any mismatch between frontend requirements and database design.
+2. Any missing fields required by the frontend.
+3. Any tables that are unnecessary.
+4. Any relationships that should be changed.
+5. Any normalization problems.
+6. Any approval-flow problems.
+7. Any currency-conversion problems.
+8. Any issues that would make Spring Boot backend implementation difficult.
+
+Do not modify any files yet. This is only a review.
+
+Give me your recommended final schema after the review, and clearly explain every change you recommend.
