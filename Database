@@ -393,7 +393,8 @@ DATABASE DESIGN
 CONSISTENT schema.sql
 
 The Java JPA entities must be clean, non-duplicated, correctly related, and suitable for a real Spring Boot + JPA/Hibernate application.
-
+---------------------------------------------------------------------------------------------------------------------------------------------
+Validate the current JPA entity mappings against the existing schema.sql for consistency, but do not modify schema.sql or the entities yet. Identify any differences in tables, columns, constraints, foreign keys, and join tables. The JPA entities must remain the source of truth
 
 
 
