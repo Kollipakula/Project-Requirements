@@ -63,3 +63,46 @@ C. Any H2 compatibility issues you encountered
 D. How I can run the application and verify that schema.sql executed successfully.
 
 Stop after the H2 schema foundation is complete and validated.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create only the POJO/model classes based on the existing schema.sql. First inspect schema.sql and the existing project structure. Create the corresponding POJO classes inside the existing models folder, with one class for each database table. Match the schema exactly, including column names, appropriate Java data types, IDs, nullable fields, and foreign-key relationships. Add appropriate constructors, getters, and setters.
+
+Important: This task is ONLY to create POJO/model classes. Do not create or modify repositories, services, controllers, APIs, frontend code, or database schema. Do not modify schema.sql or application.properties. Reuse the existing package structure and naming conventions.
+
+After creating the POJOs, compile the backend to verify that the classes have no compilation errors. Then provide a list of every POJO class created and the corresponding database table.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
