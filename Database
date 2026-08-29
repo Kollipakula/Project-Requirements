@@ -1,0 +1,65 @@
+Before creating any POJO/entity classes, let's implement and validate the database layer first.
+
+Use the finalized database schema and business rules we have already agreed upon in this conversation.
+
+Our database for development/testing is H2.
+
+Your task now is ONLY to prepare the database/H2 foundation. Do not create POJO/entity, repository, service, or controller classes yet.
+
+1. Inspect the current backend project structure, pom.xml, and application.properties.
+2. Verify that the H2 dependency and Spring Boot database configuration are correct.
+3. Create:
+   src/main/resources/schema.sql
+
+4. Put the complete canonical DDL for our finalized schema in schema.sql.
+
+The schema must include all agreed tables:
+- roles
+- users
+- user_roles
+- user_security_questions
+- currencies
+- accounts
+- payment_batches
+- approval_rules
+- approval_approvers
+- batch_approvals
+- exchange_rates
+- audit_logs
+
+5. Preserve the finalized schema exactly. Do not introduce new tables, rename columns, or change relationships unless required for H2 compatibility. If something is ambiguous, stop and tell me instead of inventing a design.
+
+6. Include:
+- primary keys
+- foreign keys
+- NOT NULL constraints
+- UNIQUE constraints
+- appropriate DECIMAL precision for monetary values
+- timestamps
+- status fields
+- approval-related constraints where H2 can enforce them
+
+7. For payment_batches:
+- include processed_at TIMESTAMP NULL
+- follow the finalized initial_balance/final_balance strategy we agreed upon
+- do not silently choose a different balance strategy
+
+8. Include the approval constraints/business rules that can safely be enforced at database level, including:
+- creator cannot approve their own batch
+- approval cannot happen after a terminal state
+- approval level separation
+- eligible approver checks where possible
+- prevent duplicate approval for the same batch/level/user as appropriate
+
+9. Configure application.properties for H2 so that schema.sql is executed automatically when the application starts.
+
+10. Do NOT create sample data yet.
+11. Do NOT create Java classes yet.
+
+After making the changes, show me:
+A. The files you created/modified
+B. The complete schema/table dependency order
+C. Any H2 compatibility issues you encountered
+D. How I can run the application and verify that schema.sql executed successfully.
+
+Stop after the H2 schema foundation is complete and validated.
