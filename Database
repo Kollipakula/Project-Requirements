@@ -190,7 +190,209 @@ Please do the following:
 IMPORTANT: Do not make large unrelated changes. Preserve the existing entity fields and project functionality. Only change what is necessary for correct JPA entity mapping and entity-first schema generation.
 
 At the end, give me a clear list of every relationship between entities and explain its cardinality and foreign-key column.
+-------------------------------------------------------------------------------------------------------------------------------------------
+IMPORTANT: My requirement is ENTITY-FIRST / JPA-FIRST database design.
 
+The Java JPA Entity classes are the SOURCE OF TRUTH for the database design.
+
+Do NOT treat the existing schema.sql as the source of truth. The purpose of this task is to correctly convert the existing Java model classes into proper JPA/Hibernate Entity classes first, and then make the database schema consistent with those entities.
+
+FOLLOW THIS PROCESS STRICTLY:
+
+STEP 1 — INSPECT BEFORE EDITING
+
+Before changing any file:
+
+1. Read all existing Java model classes under the model package.
+2. Read schema.sql to understand the current database structure and existing relationships.
+3. Read application.properties to understand how JPA/Hibernate and schema.sql are currently configured.
+4. Inspect the existing repositories/services/controllers to understand how the model classes and their existing field/getter/setter names are being used.
+5. Do NOT modify anything yet.
+
+STEP 2 — DESIGN THE JPA ENTITY MODEL FIRST
+
+Determine the correct JPA entity design based on the application's domain model.
+
+Convert the appropriate existing model classes into proper JPA entities using:
+
+@Entity
+@Table(name = "...")
+@Id
+@Column(name = "...")
+@GeneratedValue
+@ManyToOne
+@OneToMany
+@OneToOne
+@ManyToMany
+@JoinColumn(name = "...")
+@JoinTable(...)
+@IdClass / @EmbeddedId
+
+Use these annotations only where they are actually required by the domain relationships and database design.
+
+The Java entity model must be clean and normalized.
+
+IMPORTANT:
+- Java fields must use normal camelCase.
+- Database columns can remain snake_case.
+- Use @Column(name = "snake_case_column") to map Java camelCase fields to database columns.
+- Do NOT create duplicate Java fields for the same database column.
+
+For example, if the database column is:
+
+role_id
+
+the entity should have:
+
+@Id
+@Column(name = "role_id")
+private Long roleId;
+
+NOT:
+
+private Long role_id;
+private Long roleId;
+
+Similarly:
+
+@Column(name = "role_name")
+private String roleName;
+
+NOT both role_name and roleName.
+
+STEP 3 — RELATIONSHIPS
+
+Map relationships according to the actual domain model.
+
+For example, if one User can have multiple UserRoles:
+
+User
+    |
+    | 1-to-many
+    v
+UserRole
+
+then represent that relationship using appropriate JPA annotations rather than unnecessarily duplicating foreign-key fields.
+
+For many-to-many relationships, use the existing join table and map it with @ManyToMany and @JoinTable where appropriate.
+
+For foreign keys, use @JoinColumn with the actual database column name.
+
+Do not invent relationships that do not exist.
+
+Do not add unnecessary relationships simply because two tables contain similar-looking columns.
+
+STEP 4 — PRIMARY KEYS
+
+Identify the actual primary key of every table.
+
+Use @Id only on the correct primary-key field.
+
+Use @GeneratedValue ONLY if the entity/database design requires generated IDs.
+
+Do NOT add @GeneratedValue just because the field is an ID.
+
+For genuine composite primary keys, use @IdClass or @EmbeddedId correctly.
+
+STEP 5 — PRESERVE EXISTING APPLICATION CODE
+
+Do not unnecessarily rewrite the application.
+
+Preserve existing:
+- constructors
+- getters
+- setters
+- business logic
+- field usage
+
+However, if converting snake_case Java fields to camelCase is necessary for proper entity design, update the affected references consistently so the application continues to compile.
+
+Do NOT keep duplicate old and new fields just to preserve compatibility.
+
+STEP 6 — SCHEMA.SQL
+
+After the JPA entity model is correctly designed and verified, make schema.sql consistent with the JPA entity model IF schema.sql is required by the project's current database initialization process.
+
+The direction must be:
+
+JPA Entities
+     ↓
+Database Design
+     ↓
+schema.sql
+
+NOT:
+
+schema.sql
+     ↓
+JPA Entities
+
+Do not redesign the entities merely to match an incorrect or outdated schema.sql.
+
+Do not change the database design just to preserve an unnecessary old column name.
+
+STEP 7 — APPLICATION.PROPERTIES
+
+Do not arbitrarily change application.properties.
+
+First understand the current JPA/Hibernate and H2 initialization configuration.
+
+Only make a change if it is genuinely required to support the ENTITY-FIRST/JPA-FIRST design and explain why.
+
+STEP 8 — DO NOT TOUCH UNRELATED CODE
+
+Do not modify:
+- controllers
+- services
+- repositories
+- frontend JavaScript/React files
+- unrelated configuration
+- unrelated Java classes
+
+unless a minimal change is genuinely required because of the entity conversion.
+
+STEP 9 — VALIDATION
+
+After the entity conversion:
+
+1. Compile the backend using Maven.
+2. Check for Java compilation errors.
+3. Check for JPA/Hibernate mapping errors.
+4. Check for duplicate column mappings.
+5. Check that every @Column corresponds to the intended database column.
+6. Check that every @JoinColumn corresponds to the correct foreign key.
+7. Check that primary keys and composite keys are correctly mapped.
+8. Check that entity relationships do not create unnecessary recursive serialization problems.
+9. Verify that schema.sql is consistent with the final entity model.
+10. Run the application if possible and verify that the database initializes successfully.
+
+IMPORTANT:
+Do NOT perform a huge uncontrolled rewrite of all 12 model classes at once.
+
+First inspect the existing project and produce a concise mapping plan:
+
+Entity Class → Table
+Java Field → Database Column
+Primary Key → @Id
+Foreign Key → Relationship / @JoinColumn
+Relationship → JPA annotation
+Composite Key → @IdClass / @EmbeddedId
+
+Show me this mapping plan FIRST.
+
+Only after verifying the mapping plan should you modify the files.
+
+The final goal is:
+
+EXISTING DOMAIN MODEL
+        ↓
+PROPER JPA ENTITY CLASSES
+        ↓
+DATABASE DESIGN
+        ↓
+CONSISTENT schema.sql
+
+The Java JPA entities must be clean, non-duplicated, correctly related, and suitable for a real Spring Boot + JPA/Hibernate application.
 
 
 
