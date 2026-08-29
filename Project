@@ -534,3 +534,237 @@ Do not change unrelated functionality.
 Important: Please first inspect the existing approval-related components, constants, data structures, and styling in the repository before making changes. Reuse the existing project structure and coding conventions.
 Please implement the UI in a clean, professional corporate-banking style with proper spacing, alignment, readable status indicators, and responsive behavior. The approval information should be easy to understand at a glance and should not make the transaction table congested.
 Before modifying anything, briefly explain what you found in the current implementation and what you plan to change. Then make only the necessary changes.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+I want to redesign the UI/UX of the PaymentApproval page without changing any existing business logic or functionality.
+
+IMPORTANT:
+- Do NOT change the existing approval logic.
+- Do NOT change the existing approval-level calculation.
+- Do NOT change transaction status logic.
+- Do NOT change authorization/permission logic.
+- Do NOT change existing API calls, service methods, handlers, or backend behavior.
+- Reuse the existing state variables, handlers, API methods, and data structures wherever possible.
+- This should primarily be a frontend UI/UX redesign.
+
+CURRENT FUNCTIONALITY:
+The current PaymentApproval page displays transactions in a table. The table currently contains information such as:
+- Transaction ID
+- Batch Description
+- Amount
+- Account Type
+- Approval Level
+- Requested By
+- Requested On
+- Status
+- Remarks
+- Actions such as Approve, Reject, and Update Remark
+
+The current approval is performed based on the existing transaction/payment approval logic. A transaction can require different approval levels such as L1, L2, etc. Some transactions may already be approved, some pending, and some rejected.
+
+NEW UI/UX DESIGN:
+
+1. MAIN TABLE
+
+Keep the main table clean and less cluttered.
+
+Display:
+- Transaction ID
+- Batch Description
+- Amount
+- Account Type
+- Requested By
+- Requested On
+- Status
+- Remarks (if appropriate)
+- Action/View
+
+Remove the current small "Approval Level" presentation such as "1", "1 → 2", etc. from the main table.
+
+Instead, make the Batch Description clickable.
+
+For example:
+"Main Operating Account"
+
+When the user clicks the Batch Description, open a professional Batch Details modal/drawer/panel.
+
+2. BATCH DETAILS VIEW
+
+When the user clicks a Batch Description, show detailed information about that batch.
+
+Display:
+- Batch Description
+- Batch ID, if already available in the existing data
+- Requested By
+- Requested On
+- Overall batch/transaction information
+- Transactions belonging to that batch
+
+Do NOT invent new backend data. Only display information that already exists in the current application/data.
+
+3. TRANSACTION LIST INSIDE BATCH DETAILS
+
+Inside the Batch Details view, display all transactions belonging to that batch.
+
+For each transaction show:
+- Transaction ID
+- Amount
+- Account Type
+- Current Status
+- Existing remark, if available
+
+Allow the user to select/click a transaction to see its detailed approval information.
+
+4. APPROVAL PROGRESS UI
+
+For the selected transaction, replace the current small approval-level text with a visually clear approval progress/timeline component.
+
+For example:
+
+✓ L1 -------- ✓ L2 -------- ● L3
+
+L1: Approved
+L2: Approved
+L3: Pending
+
+The approval levels must be generated dynamically from the EXISTING approval data and existing approval logic.
+
+Do NOT hard-code L1/L2/L3.
+
+If a transaction only requires L1, show only the required level.
+
+If it requires L1 → L2, show those levels.
+
+If it requires more levels, display them according to the existing data.
+
+Use clear visual states:
+- Completed/Approved → checkmark
+- Current/Pending → active/pending indicator
+- Rejected → rejected indicator
+- Future/not reached → inactive indicator
+
+Also show useful existing information such as approver name, approval date/time, and remark if that information already exists in the current application.
+
+5. APPROVE AND REJECT ACTIONS
+
+The existing Approve and Reject functionality MUST continue to work exactly as it currently works.
+
+Move the existing Approve and Reject actions into the Batch Details/Transaction Details view where appropriate.
+
+For example:
+
+[ Approve ] [ Reject ]
+
+IMPORTANT:
+- Use the existing Approve handler.
+- Use the existing Reject handler.
+- Use the existing API/service methods.
+- Keep the existing authorization checks.
+- Only show these buttons when the current user is allowed to perform the action according to the existing logic.
+- Do not create new approval rules.
+
+If a transaction is already approved or rejected, do not show inappropriate approval actions. Follow the existing logic.
+
+6. REMARK FUNCTIONALITY
+
+Move the existing remark functionality into the Batch Details/Transaction Details view.
+
+For the selected transaction, display the existing remark if one exists.
+
+Where the current user is permitted to add/update a remark, provide:
+
+[ Add a remark... ]
+
+[ Update Remark ]
+
+Reuse the existing remark state, handler, API/service method, and authorization logic.
+
+Do NOT create a new remark mechanism.
+
+7. IMPORTANT: APPROVAL IS TRANSACTION/PAYMENT LEVEL
+
+The existing application performs approval based on the payment/transaction.
+
+Do NOT incorrectly treat every transaction in a batch as having one shared approval status.
+
+A batch can contain multiple transactions, and each transaction must continue to use its existing approval/status logic.
+
+The Batch Details view is only a better way to DISPLAY the transactions and their individual approval progress.
+
+8. BATCH STATUS
+
+If useful, show an overall batch status based ONLY on the existing transaction statuses/logic.
+
+Do not introduce new business rules.
+
+If calculating an overall status would require changing existing backend/business logic, do not implement it. Instead, continue displaying the existing transaction statuses.
+
+9. UI/UX
+
+Make the design look like a professional corporate banking application.
+
+Use:
+- Clean modal or right-side drawer
+- Clear section headings
+- Approval timeline/progress indicator
+- Status badges
+- Proper spacing
+- Responsive design
+- Good visual hierarchy
+- Bootstrap/components already used in the project, if applicable
+- Existing CSS conventions where possible
+
+Avoid making the UI unnecessarily complicated.
+
+10. CODE SAFETY
+
+Before modifying anything, inspect the existing PaymentApproval.js and related CSS/service files.
+
+Understand:
+- Existing approval state
+- Existing approval-level logic
+- Existing Approve handler
+- Existing Reject handler
+- Existing remark handler
+- Existing API/service calls
+- Existing transaction/batch data structure
+- Existing authorization checks
+
+Then make the minimum required changes to redesign the UI.
+
+Do NOT rewrite working business logic just to implement the new design.
+
+Do NOT change backend code unless absolutely required. Prefer a frontend-only implementation.
+
+After making the changes, verify that:
+- Existing Approve works
+- Existing Reject works
+- Existing Update Remark works
+- Existing approval levels still behave exactly the same
+- Existing statuses still behave exactly the same
+- Existing authorization rules still work
+- No API contracts are changed
+- No unrelated pages/features are affected
+
+The goal is:
+
+CURRENT:
+Main Table → Small Approval Level → Approve/Reject/Remark
+
+NEW:
+Main Table → Click Batch Description
+             ↓
+        Batch Details
+             ↓
+       Select Transaction
+             ↓
+       Approval Timeline
+             ↓
+    View Approval History
+             ↓
+     Add/Update Remark
+             ↓
+        Approve / Reject
+
+Again: THIS IS A UI/UX REDESIGN, NOT A CHANGE TO THE APPROVAL BUSINESS LOGIC.
