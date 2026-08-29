@@ -82,7 +82,84 @@ After creating the POJOs, compile the backend to verify that the classes have no
 
 
 
+---------------------------------------------------------------------------------------------------------------------------
+I need you to update the Java model classes in this Spring Boot project to use proper JPA/Hibernate entity mappings.
 
+IMPORTANT:
+- DO NOT remove, rewrite, or replace schema.sql.
+- DO NOT remove the existing database tables or SQL definitions.
+- DO NOT change the database from H2 file-based storage.
+- KEEP:
+  spring.datasource.url=jdbc:h2:file:./paymentdb
+- KEEP:
+  spring.jpa.hibernate.ddl-auto=none
+- KEEP the existing Spring SQL initialization configuration.
+- schema.sql remains responsible for creating/initializing the database tables.
+- JPA entities are responsible for mapping the Java model classes to those existing tables.
+
+I want all relevant model classes to be proper JPA entities using annotations such as:
+@Entity
+@Table
+@Id
+@GeneratedValue (only where appropriate according to the existing schema)
+@Column
+@ManyToOne
+@OneToMany
+@OneToOne
+@ManyToMany
+@JoinColumn
+@JoinTable
+mappedBy
+etc., wherever appropriate.
+
+Use the existing schema.sql and the actual database table/column definitions as the source of truth for the mappings.
+
+The database currently contains tables including:
+- ACCOUNTS
+- APPROVAL_APPROVERS
+- APPROVAL_RULES
+- AUDIT_LOGS
+- BATCH_APPROVALS
+- CURRENCIES
+- EXCHANGE_RATES
+- PAYMENT_BATCHES
+- ROLES
+- USERS
+- USER_ROLES
+- USER_SECURITY_QUESTIONS
+
+First inspect schema.sql completely and inspect ALL model/entity classes before making changes.
+
+Determine the actual primary keys, foreign keys, nullable columns, and relationships from schema.sql.
+
+Then update the Java model classes so that:
+1. Every table that has a corresponding model class is represented by @Entity.
+2. Table names are mapped correctly using @Table.
+3. Primary-key fields use @Id and the correct generation strategy only if the schema supports it.
+4. Java fields are mapped to the exact database column names using @Column where necessary.
+5. Foreign-key relationships are represented using the correct JPA relationship annotations.
+6. Correctly model one-to-one, one-to-many, many-to-one, and many-to-many relationships based on the actual foreign keys in schema.sql.
+7. For many-to-many relationships, use the existing join table (for example USER_ROLES) rather than creating a new table.
+8. Do not invent relationships that are not supported by the schema.
+9. Do not create duplicate fields for the same relationship unless necessary.
+10. Keep the existing business logic, constructors, getters/setters, repositories, services, controllers, and API behavior working.
+11. Avoid changing API JSON structure unless it is required.
+12. Be careful about bidirectional relationships and avoid infinite JSON serialization/recursion. Use appropriate Jackson annotations such as @JsonIgnore, @JsonManagedReference/@JsonBackReference, or another suitable approach only where necessary.
+13. Preserve the existing naming conventions if possible, but use clean Java camelCase field names with @Column mappings where appropriate.
+14. Do not modify schema.sql just to make it fit the entities. The entities must be mapped to the existing schema.
+
+After making the changes:
+- Show me which files you changed.
+- For each entity, explain which database table it maps to.
+- Give me a relationship summary such as:
+  Currency 1 -> many Accounts
+  User many <-> many Role through USER_ROLES
+  PaymentBatch 1 -> many BatchApprovals
+  etc.
+- Identify any relationship where the schema does not provide enough information to safely determine the JPA mapping instead of guessing.
+- Check that the project compiles and that the entity mappings are consistent with the existing schema.
+
+Do not make unrelated changes to the project.
 
 
 
