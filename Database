@@ -163,6 +163,36 @@ Do not make unrelated changes to the project.
 
 
 
+----------------------------------------------------------------------------------------------------------
+Review the JPA entity changes you have just made. Do not undo the existing changes.
+
+My requirement is ENTITY-FIRST / JPA-FIRST database design.
+
+The Java entity classes with @Entity, @Table, @Id, @Column and relationship annotations must be the source of truth for the database schema.
+
+Please do the following:
+
+1. Review every entity and verify that all JPA annotations are correct.
+2. Verify all @OneToOne, @OneToMany, @ManyToOne and @ManyToMany relationships.
+3. Verify @JoinColumn, @JoinTable and composite-key mappings.
+4. Make sure the owning side and foreign-key columns are correct.
+5. Do not simply make the entities match schema.sql.
+6. Do not use schema.sql to create the tables.
+7. Configure Hibernate/JPA to generate the database schema from the entities.
+8. Disable Spring SQL script initialization.
+9. For development, use:
+   spring.jpa.hibernate.ddl-auto=create
+   spring.sql.init.mode=never
+10. Remove/disable any configuration that causes schema.sql to create the tables.
+11. Keep the H2 database configuration working.
+12. Compile the project and report any JPA mapping errors.
+
+IMPORTANT: Do not make large unrelated changes. Preserve the existing entity fields and project functionality. Only change what is necessary for correct JPA entity mapping and entity-first schema generation.
+
+At the end, give me a clear list of every relationship between entities and explain its cardinality and foreign-key column.
+
+
+
 
 
 
