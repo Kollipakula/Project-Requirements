@@ -940,4 +940,9 @@ Identify:
 
 Do not modify any files yet. This is only a review.
 
-Give me your recommended final schema after the review, and clearly explain every change you recommend.
+Give me your recommended final schema after the review, and clearly explain every change you recommend
+--------------------------------
+INSERT INTO users
+(user_id, username, email, password_hash, full_name, employee_code, status, failed_attempts)
+VALUES
+(101, 'testuser', 'test@bank.com', 'dummy', 'Test User', 'EMP101', 'ACTIVE', 0);
