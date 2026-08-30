@@ -1349,3 +1349,36 @@ Do NOT commit anything.
 Do NOT make any additional improvements or refactoring.
 
 Only make changes strictly necessary to satisfy this scope.
+----------------------+++-----------
+FINAL READ-ONLY VERIFICATION — DO NOT MODIFY CODE
+
+Do not make any changes to Java files, DTOs, entities, repositories, services, controllers, frontend files, database schema, database configuration, or application logic.
+
+The implementation changes have already been completed and Maven compile has succeeded.
+
+I only want a final read-only verification of the current working tree.
+
+Please:
+
+1. Check git status and git diff.
+2. Confirm that paymentdb.mv.db is only a local runtime/database artifact and should NOT be committed.
+3. Do NOT modify, recreate, migrate, delete, or alter any database schema or database data.
+4. Do NOT modify any Java source files.
+5. Do NOT modify frontend files.
+6. Confirm that PayrollBatchRepository.java is intentionally deleted and report whether any remaining source/test references require it.
+7. Confirm whether PaymentService.java is still referenced anywhere and report the result only.
+8. Confirm that the existing Maven compile status remains successful.
+9. Report any actual blocker, but do not fix it automatically.
+
+IMPORTANT:
+This is a READ-ONLY audit.
+Do not create or edit files.
+Do not run commands that modify source code or database state.
+Do not propose or apply "cleanup" changes.
+
+At the end, provide only:
+- Compile status
+- paymentdb.mv.db status
+- PayrollBatchRepository.java reference status
+- PaymentService.java reference status
+- Any actual blocker
