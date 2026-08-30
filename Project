@@ -1,4 +1,4 @@
-Update only the Create Payroll frontend . Do not modify the payment currency implementation or any unrelated functionality.
+ooUpdate only the Create Payroll frontend . Do not modify the payment currency implementation or any unrelated functionality.
 
 Change the Debit Account field in Batch Details from a text input to a dropdown/select.
 Since there is currently no backend/API for account data, use static frontend options:
@@ -768,3 +768,30 @@ Main Table → Click Batch Description
         Approve / Reject
 
 Again: THIS IS A UI/UX REDESIGN, NOT A CHANGE TO THE APPROVAL BUSINESS LOGIC.
+-----------&&&&&&-------------FIX ONLY THE CURRENT COMPILE ERROR — MINIMAL CHANGE
+
+The read-only verification found this exact blocker:
+
+PaymentBatchService.java calls setBatchPayments(...) on PaymentBatch, but PaymentBatch currently does not provide that method.
+
+Fix ONLY this compile-time mismatch.
+
+Rules:
+1. Do not change the database schema.
+2. Do not change database configuration or data.
+3. Do not modify any frontend files.
+4. Do not redesign the DTOs.
+5. Do not redesign PaymentBatch or BatchPayment relationships.
+6. Do not change controller endpoints.
+7. Do not change unrelated repositories/services/entities.
+8. Do not restore PayrollBatchRepository.java.
+9. Do not restore PaymentService.java.
+10. Do not create paymentdb.mv.db.
+11. Make the smallest code change necessary so the existing PaymentBatchService.java and PaymentBatch.java are consistent.
+12. Preserve the existing intended batch-payment relationship and mappings.
+13. After the minimal fix, run:
+    mvn -q -DskipTests compile
+14. Report exactly which file(s) were changed and why.
+15. Do not commit anything.
+
+If the required fix would involve changing the database schema or changing the intended entity relationship, STOP and report that instead of making the change.
