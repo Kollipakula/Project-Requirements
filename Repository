@@ -990,3 +990,70 @@ H. Whether the project compiles successfully.
 I. Any remaining issue that must be fixed before we proceed.
 
 Only after presenting this review should you make corrections that are strictly necessary.
+
+
+
+--------------------------------------------The DTO implementation changes have been kept and Maven compile reported:
+
+COMPILE_STATUS=SUCCESS
+
+Do NOT make any code changes yet.
+
+I want a final post-implementation audit of the CURRENT working tree before I commit anything.
+
+1. Run:
+   git status --short
+   git diff --stat
+   git diff --name-status
+
+2. Identify every changed, added, deleted, or untracked file.
+
+3. Compare the current changes against the DTO task we just completed.
+
+The intended implementation scope was:
+
+CREATED:
+- PaymentBatchRequestDTO.java
+- BatchPaymentRequestDTO.java
+- PaymentBatchResponseDTO.java
+- BatchPaymentResponseDTO.java
+- SimpleUserDTO.java
+- SimpleAccountDTO.java
+- SimpleCurrencyDTO.java
+
+MODIFIED:
+- PaymentBatchService.java
+- PaymentBatchController.java
+
+Only repository changes that are strictly required for the DTO mapping implementation are acceptable.
+
+4. Pay special attention to:
+- paymentdb.mv.db
+- PaymentsService.java
+- BatchPayment.java
+- PaymentBatch.java
+- any repository files
+- any other files outside the DTO/controller/service scope
+
+For every extra changed file, tell me:
+- why it changed
+- whether it is required
+- whether it should be kept or reverted
+
+5. DO NOT revert, delete, or modify anything automatically.
+6. DO NOT make any new code changes.
+7. DO NOT commit anything.
+8. Do not change frontend code.
+9. Do not create approval DTOs.
+10. Do not redesign entities or database schema.
+
+Finally report:
+
+A. Intended files
+B. Unexpected files
+C. Files safe to revert
+D. Files that must remain
+E. Current compile status
+F. Whether the working tree is clean enough to commit
+
+If any file is ambiguous, stop and explain it rather than changing it.
