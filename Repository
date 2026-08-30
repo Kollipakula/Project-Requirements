@@ -423,3 +423,384 @@ I want you to answer these questions:
 Finally, give me a single "FINAL APPROVED DTO CONTRACT" section containing only the DTO classes and their fields that we should actually implement now.
 
 Do not provide implementation code yet. I want to approve the contract first.
+
+------------------------------------------------The DTO contract shown in the previous review is FINAL and APPROVED.
+
+Now implement the DTO layer exactly according to that approved contract.
+
+IMPORTANT: Before changing anything, inspect the ACTUAL current code in:
+- PaymentBatch.java
+- BatchPayment.java
+- User.java
+- Account.java
+- Currency.java
+- PaymentBatchService.java
+- PaymentBatchController.java
+- existing DTOs under com.axess.payment.dto
+
+Do not guess entity field names. Use the actual entity definitions.
+
+RULES:
+1. Do not redesign entities.
+2. Do not change the database schema.
+3. Do not change frontend code.
+4. Do not create approval DTOs yet.
+5. Do not make unrelated changes.
+6. Do not refactor unrelated code.
+7. Preserve the existing business logic and validation.
+8. Do not change the existing entity relationships.
+9. Do not expose JPA entities directly from controller responses.
+
+==================================================
+DTOs TO IMPLEMENT
+==================================================
+
+Create exactly these 7 DTO classes:
+
+REQUEST:
+1. PaymentBatchRequestDTO
+2. BatchPaymentRequestDTO
+
+RESPONSE:
+3. PaymentBatchResponseDTO
+4. BatchPaymentResponseDTO
+5. SimpleUserDTO
+6. SimpleAccountDTO
+7. SimpleCurrencyDTO
+
+Use the EXACT fields and Java types from the FINAL APPROVED DTO CONTRACT from the previous review.
+
+Do not add extra fields.
+Do not remove approved fields.
+Do not rename approved fields.
+
+==================================================
+REQUEST DTO CONTRACT
+==================================================
+
+PaymentBatchRequestDTO:
+
+- action: String
+- batchId: Long
+- batchReference: String
+- paymentType: String
+- executionDate: LocalDate
+- sourceAccountId: Long
+- sourceAccountName: String
+- currencyCode: String
+- totalAmount: BigDecimal
+- description: String
+- payments: List<BatchPaymentRequestDTO>
+
+BatchPaymentRequestDTO:
+
+- batchPaymentId: Long
+- employeeId: String
+- employeeName: String
+- beneficiaryAccount: String
+- bankCode: String
+- amount: BigDecimal
+
+==================================================
+RESPONSE DTO CONTRACT
+==================================================
+
+PaymentBatchResponseDTO:
+
+- batchId: Long
+- batchReference: String
+- paymentType: String
+- status: String
+- executionDate: LocalDate
+- totalAmount: BigDecimal
+- totalTransactions: Integer
+- createdAt: LocalDateTime
+- submittedAt: LocalDateTime
+- approvedAt: LocalDateTime
+- rejectedAt: LocalDateTime
+- processedAt: LocalDateTime
+- initialBalance: BigDecimal
+- finalBalance: BigDecimal
+- description: String
+- createdBy: SimpleUserDTO
+- sourceAccount: SimpleAccountDTO
+- currency: SimpleCurrencyDTO
+- payments: List<BatchPaymentResponseDTO>
+
+BatchPaymentResponseDTO:
+
+- batchPaymentId: Long
+- employeeId: String
+- employeeName: String
+- beneficiaryAccount: String
+- bankCode: String
+- amount: BigDecimal
+
+SimpleUserDTO:
+
+- userId: Long
+- fullName: String
+
+SimpleAccountDTO:
+
+- accountId: Long
+- accountNumber: String
+- accountName: String
+
+SimpleCurrencyDTO:
+
+- currencyCode: String
+- currencyName: String
+
+==================================================
+DTO DESIGN
+==================================================
+
+DTOs must remain separate from JPA entities.
+
+Do NOT:
+- annotate DTOs with @Entity
+- put JPA relationships in DTOs
+- expose User, Account, Currency, PaymentBatch or BatchPayment entities directly
+- put repository logic in DTOs
+- put service/business logic in DTOs
+
+Use the simple DTOs for nested response objects:
+
+PaymentBatchResponseDTO.createdBy
+        -> SimpleUserDTO
+
+PaymentBatchResponseDTO.sourceAccount
+        -> SimpleAccountDTO
+
+PaymentBatchResponseDTO.currency
+        -> SimpleCurrencyDTO
+
+PaymentBatchResponseDTO.payments
+        -> List<BatchPaymentResponseDTO>
+
+
+==================================================
+BACKEND DTO MAPPING
+==================================================
+
+After creating the DTOs, integrate them into the existing
+PaymentBatchController / PaymentBatchService flow.
+
+The intended architecture is:
+
+Frontend Request DTO
+        ↓
+Controller
+        ↓
+PaymentBatchService
+        ↓
+PaymentBatch / BatchPayment entities
+        ↓
+Repository
+
+and:
+
+Repository
+        ↓
+PaymentBatch / BatchPayment entities
+        ↓
+DTO mapping
+        ↓
+PaymentBatchResponseDTO
+        ↓
+Controller
+        ↓
+Frontend
+
+
+IMPORTANT:
+
+Preserve the existing PaymentBatchService business logic.
+
+Existing flows that must continue to work:
+
+- saveDraft()
+- createAndSubmit()
+- updateDraft()
+- submitForApproval()
+- loadBatchWithPayments()
+
+Do not rewrite their business rules unnecessarily.
+
+Do not remove existing validation.
+
+Do not change how DRAFT/PENDING/APPROVED/REJECTED/PROCESSED
+workflow logic currently works.
+
+==================================================
+STATUS RULE
+==================================================
+
+Keep action separate from persisted workflow status.
+
+Request:
+- action may indicate DRAFT or SUBMIT.
+
+Persisted backend status must continue using the existing vocabulary:
+
+- DRAFT
+- PENDING
+- APPROVED
+- REJECTED
+- PROCESSED
+
+Do NOT introduce SUBMITTED as a backend persisted status.
+
+The current frontend may still contain "SUBMITTED", but do not add
+SUBMITTED to the backend status model as part of this task.
+
+
+==================================================
+ACCOUNT / CURRENCY / USER MAPPING
+==================================================
+
+Inspect the actual entity fields first.
+
+For PaymentBatch relationships:
+
+PaymentBatch.sourceAccount
+        -> SimpleAccountDTO
+
+PaymentBatch.currency
+        -> SimpleCurrencyDTO
+
+PaymentBatch.createdByUser
+        -> SimpleUserDTO
+
+Map the actual entity fields to the approved DTO fields.
+
+If the actual entity field names differ from the approved DTO names,
+use the appropriate mapping based on the actual entity structure.
+
+Do NOT modify the entity just to make the DTO mapping easier.
+
+
+==================================================
+BATCH PAYMENT MAPPING
+==================================================
+
+Map:
+
+BatchPayment.batchPaymentId
+BatchPayment.employeeId
+BatchPayment.employeeName
+BatchPayment.beneficiaryAccount
+BatchPayment.bankCode
+BatchPayment.amount
+
+to BatchPaymentResponseDTO.
+
+For request mapping, convert:
+
+BatchPaymentRequestDTO
+        ->
+BatchPayment entity
+
+and associate the child entity with the correct PaymentBatch.
+
+
+==================================================
+IMPORTANT UPDATE-DRAFT RULE
+==================================================
+
+Preserve the existing updateDraft behavior.
+
+If batchPaymentId is supplied:
+- treat it as an existing child row
+- update the corresponding existing BatchPayment
+
+If batchPaymentId is null:
+- treat it as a new payment row
+
+Do not break the existing ownership/security check for child rows.
+
+Do not introduce unrelated update behavior.
+
+
+==================================================
+VALIDATION
+==================================================
+
+Preserve all existing service-level validation.
+
+If the project already uses Jakarta Bean Validation annotations,
+use the existing project convention for required DTO fields.
+
+Do not introduce a new validation framework or dependency.
+
+Do not move business validation from the service into DTOs.
+
+
+==================================================
+DO NOT CREATE YET
+==================================================
+
+Do NOT create:
+
+- ApprovalQueueItemDTO
+- BatchApprovalActionRequestDTO
+- BatchApprovalResponseDTO
+- any other approval DTOs
+- mapper classes unless absolutely necessary for this DTO integration
+- new entities
+- new repositories
+- database migrations
+
+
+==================================================
+SCOPE CONTROL
+==================================================
+
+Only modify files that are genuinely required for:
+
+1. Creating the 7 approved DTOs.
+2. Mapping request DTOs to existing entities.
+3. Mapping existing entities to response DTOs.
+4. Updating the relevant PaymentBatchController/Service signatures
+   only where necessary to use the DTOs.
+
+Do NOT refactor unrelated code.
+
+Do NOT modify unrelated controllers, services, repositories,
+entities, or existing DTOs.
+
+
+==================================================
+FINAL VERIFICATION
+==================================================
+
+After implementation:
+
+1. Compile/build the backend.
+2. Check for Java compilation errors.
+3. Check imports.
+4. Check package names.
+5. Check every DTO field against the approved contract.
+6. Verify that no JPA entity is directly returned by the controller.
+7. Verify that Account/Currency/User are represented by their
+   corresponding Simple DTOs.
+8. Verify that existing PaymentBatchService validation and workflow
+   behavior is preserved.
+9. Verify that backend statuses remain:
+   DRAFT, PENDING, APPROVED, REJECTED, PROCESSED.
+10. Verify that SUBMITTED was not introduced as a backend status.
+
+Finally, report:
+
+1. Files created.
+2. Files modified.
+3. Exact mapping decisions made because actual entity field names
+   differed from DTO field names.
+4. Whether the project compiles successfully.
+5. Any remaining compilation/runtime issue.
+6. Confirm whether any unrelated files were changed.
+
+STOP after DTO implementation, DTO mapping, and verification.
+
+Do not proceed to frontend changes or approval workflow changes.
