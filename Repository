@@ -1057,3 +1057,295 @@ E. Current compile status
 F. Whether the working tree is clean enough to commit
 
 If any file is ambiguous, stop and explain it rather than changing it.
+#######@@@@@##############22##2######
+FINAL DTO SCOPE CLEANUP AND VALIDATION — DO NOT COMMIT
+
+The DTO implementation has already been completed and Maven compile currently succeeds.
+
+Before I commit anything, perform ONE final scope-cleanup and validation pass.
+
+The approved task is ONLY:
+- implement the 7 approved DTOs
+- integrate request DTOs into PaymentBatchService
+- map entities to response DTOs
+- make PaymentBatchController accept request DTOs and return response DTOs
+- preserve the existing payment-batch business logic and workflow
+
+Do NOT add new functionality.
+Do NOT change the frontend.
+Do NOT commit anything.
+
+==================================================
+1. REMOVE LOCAL DATABASE ARTIFACT
+==================================================
+
+Remove/exclude this local runtime artifact:
+
+paymentdb.mv.db
+
+It must NOT be included in the commit.
+
+==================================================
+2. PAYMENTBATCH ENTITY — IMPORTANT
+==================================================
+
+The original approved instruction was:
+
+"Do not redesign entities or database schema."
+
+Review PaymentBatch.java carefully.
+
+Keep only entity changes that are genuinely required for the existing PaymentBatch flow and DTO implementation.
+
+Do NOT redesign:
+- database schema
+- JPA strategy
+- entity relationships
+- entity fields
+- ID strategy
+- mappings
+
+If any PaymentBatch.java changes were only made for convenience or DTO implementation, revert those unnecessary changes.
+
+Do not remove legitimate existing functionality.
+
+==================================================
+3. BATCHPAYMENT ENTITY
+==================================================
+
+Review BatchPayment.java.
+
+Do not redesign the entity.
+
+Keep only changes that are genuinely required for the existing PaymentBatch/BatchPayment flow.
+
+==================================================
+4. PAYROLLBATCHREPOSITORY DELETION — INTENTIONAL
+==================================================
+
+I intentionally deleted:
+
+PayrollBatchRepository.java
+
+KEEP THIS FILE DELETED.
+
+Do NOT restore it.
+
+However, search the entire backend source tree for any remaining:
+- imports
+- references
+- usages
+- dependencies
+
+of PayrollBatchRepository.
+
+There should be no remaining references.
+
+If references exist, report them and make only the minimum necessary changes to use the new PaymentBatchRepository flow.
+
+Do not recreate PayrollBatchRepository.java.
+
+==================================================
+5. PAYMENTSERVICE.JAVA
+==================================================
+
+Check PaymentService.java separately.
+
+If it was intentionally replaced by PaymentBatchService and there are no remaining references, it may remain deleted.
+
+If there are remaining imports/usages that require it, report them.
+
+Do not restore or delete it merely for naming purposes.
+
+==================================================
+6. REPOSITORIES
+==================================================
+
+Keep AccountRepository.java and UserRepository.java changes ONLY if they are required for resolving the Account/User relationships used by the approved DTO mapping.
+
+Keep:
+- PaymentBatchRepository.java
+- BatchPaymentRepository.java
+- CurrencyRepository.java
+
+Do not make unrelated repository changes.
+
+==================================================
+7. DTO CONTRACT — FINAL AND APPROVED
+==================================================
+
+The FINAL APPROVED DTO CONTRACT is authoritative.
+
+Implement exactly these 7 DTOs:
+
+REQUEST:
+- PaymentBatchRequestDTO
+- BatchPaymentRequestDTO
+
+RESPONSE:
+- PaymentBatchResponseDTO
+- BatchPaymentResponseDTO
+- SimpleUserDTO
+- SimpleAccountDTO
+- SimpleCurrencyDTO
+
+Do NOT:
+- add extra DTO fields
+- remove approved DTO fields
+- change approved field names
+- change approved field types
+- create approval DTOs
+
+Do NOT create:
+- ApprovalQueueItemDTO
+- BatchApprovalDTO
+- any other approval DTO
+
+==================================================
+8. DTO MAPPING
+==================================================
+
+The intended flow is:
+
+Frontend Request DTO
+        ↓
+PaymentBatchService
+        ↓
+PaymentBatch / BatchPayment entities
+        ↓
+Repository
+
+and:
+
+Repository
+        ↓
+Entities
+        ↓
+DTO mapping
+        ↓
+Response DTO
+        ↓
+Frontend
+
+PaymentBatchController must NEVER return JPA entities directly.
+
+All controller responses must use response DTOs.
+
+==================================================
+9. PRESERVE EXISTING BUSINESS LOGIC
+==================================================
+
+Do NOT redesign or remove existing business logic.
+
+Preserve:
+
+- saveDraft
+- createAndSubmit
+- updateDraft
+- submitForApproval
+- loadBatchWithPayments
+- existing validation
+- existing business rules
+- existing Account/User/Currency resolution
+
+Keep the existing backend status vocabulary:
+
+DRAFT
+PENDING
+APPROVED
+REJECTED
+PROCESSED
+
+Do NOT introduce:
+
+SUBMITTED
+
+Keep action (DRAFT/SUBMIT) separate from persisted workflow status.
+
+==================================================
+10. CONTROLLER
+==================================================
+
+PaymentBatchController should remain the DTO-based API surface.
+
+It should:
+- accept PaymentBatchRequestDTO
+- return PaymentBatchResponseDTO
+- use PaymentBatchService
+- never expose PaymentBatch or BatchPayment entities directly
+
+Preserve the existing endpoints and behavior:
+
+- POST /draft
+- POST /submit
+- PUT /draft/{batchId}
+- POST /{batchId}/submit
+- GET /{batchId}
+
+Do not change endpoint behavior unless required for DTO mapping.
+
+==================================================
+11. NO FRONTEND CHANGES
+==================================================
+
+Do NOT modify any frontend files.
+
+Frontend integration will be handled separately.
+
+==================================================
+12. NO UNRELATED CHANGES
+==================================================
+
+Do NOT modify:
+- unrelated controllers
+- unrelated services
+- unrelated entities
+- unrelated repositories
+- database schema
+- frontend
+- approval workflow
+- approval DTOs
+
+==================================================
+13. FINAL VALIDATION
+==================================================
+
+After making only the necessary cleanup changes:
+
+Run:
+
+mvn -q -DskipTests compile
+
+Then run:
+
+git status --short
+
+Then review the final git diff.
+
+Do NOT commit.
+
+==================================================
+14. FINAL REPORT
+==================================================
+
+Report clearly:
+
+A. Files created
+B. Files modified
+C. Files intentionally deleted
+D. Files restored, if any
+E. Entity changes reverted, if any
+F. DTO mapping decisions caused by actual entity field names
+G. Confirmation that PayrollBatchRepository.java remains intentionally deleted
+H. Confirmation that there are zero remaining references to PayrollBatchRepository
+I. PaymentService.java status and whether it has remaining references
+J. Confirmation that paymentdb.mv.db is removed/excluded
+K. Maven compile result
+L. Confirmation that no frontend files were changed
+M. Confirmation that no unrelated files remain changed
+
+Do NOT commit anything.
+
+Do NOT make any additional improvements or refactoring.
+
+Only make changes strictly necessary to satisfy this scope.
