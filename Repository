@@ -804,3 +804,189 @@ Finally, report:
 STOP after DTO implementation, DTO mapping, and verification.
 
 Do not proceed to frontend changes or approval workflow changes.
+
+
+-----------------------------+-----------------
+The DTO implementation has already been applied. Do NOT restart the implementation and do NOT create duplicate DTOs.
+
+Now perform a careful READ-ONLY REVIEW of the current changes against the FINAL APPROVED DTO CONTRACT below.
+
+IMPORTANT:
+- Do not make any changes until you have identified every mismatch.
+- Do not redesign entities.
+- Do not change the database schema.
+- Do not change frontend code.
+- Do not create approval DTOs.
+- Do not modify unrelated files.
+- Preserve all existing business logic and validation.
+- Do not change existing backend status vocabulary.
+
+FINAL APPROVED DTO CONTRACT
+
+REQUEST DTOs:
+
+1. PaymentBatchRequestDTO
+- action: String, required
+- batchId: Long, optional
+- batchReference: String, required
+- paymentType: String, required
+- executionDate: LocalDate, required
+- sourceAccountId: Long, optional
+- sourceAccountName: String, optional transitional
+- currencyCode: String, required
+- totalAmount: BigDecimal, required
+- description: String, optional
+- payments: List<BatchPaymentRequestDTO>, required for submit and draft save with rows
+
+2. BatchPaymentRequestDTO
+- batchPaymentId: Long, optional
+- employeeId: String, required
+- employeeName: String, required
+- beneficiaryAccount: String, required
+- bankCode: String, required
+- amount: BigDecimal, required
+
+RESPONSE DTOs:
+
+3. PaymentBatchResponseDTO
+- batchId: Long
+- batchReference: String
+- paymentType: String
+- status: String
+- executionDate: LocalDate
+- totalAmount: BigDecimal
+- totalTransactions: Integer
+- createdAt: LocalDateTime
+- submittedAt: LocalDateTime, optional
+- approvedAt: LocalDateTime, optional
+- rejectedAt: LocalDateTime, optional
+- processedAt: LocalDateTime, optional
+- initialBalance: BigDecimal, optional
+- finalBalance: BigDecimal, optional
+- description: String, optional
+- createdBy: SimpleUserDTO
+- sourceAccount: SimpleAccountDTO
+- currency: SimpleCurrencyDTO
+- payments: List<BatchPaymentResponseDTO>
+
+4. BatchPaymentResponseDTO
+- batchPaymentId: Long
+- employeeId: String
+- employeeName: String
+- beneficiaryAccount: String
+- bankCode: String
+- amount: BigDecimal
+
+5. SimpleUserDTO
+- userId: Long
+- fullName: String
+
+6. SimpleAccountDTO
+- accountId: Long
+- accountNumber: String, optional
+- accountName: String
+
+7. SimpleCurrencyDTO
+- currencyCode: String
+- currencyName: String, optional
+
+
+CURRENT REQUIRED ARCHITECTURE:
+
+Frontend Request DTO
+        ↓
+PaymentBatchController
+        ↓
+PaymentBatchService
+        ↓
+PaymentBatch / BatchPayment entities
+        ↓
+Repository
+
+Repository
+        ↓
+Entities
+        ↓
+DTO mapping
+        ↓
+Response DTO
+        ↓
+Frontend
+
+REVIEW THESE SPECIFICALLY:
+
+1. Verify all 7 DTOs exist exactly once and their fields/types exactly match the approved contract.
+
+2. Verify request DTOs are used for incoming controller requests.
+
+3. Verify response DTOs are returned from controller endpoints instead of JPA entities.
+
+4. Verify PaymentBatchService still preserves:
+   - saveDraft
+   - createAndSubmit
+   - updateDraft
+   - submitForApproval
+   - loadBatchWithPayments
+
+5. Verify existing validation and business logic were preserved.
+
+6. Verify action is separate from persisted workflow status.
+
+7. Verify backend status vocabulary remains:
+   DRAFT
+   PENDING
+   APPROVED
+   REJECTED
+   PROCESSED
+
+   Do NOT introduce SUBMITTED as a backend status.
+
+8. Verify entity relationships are mapped correctly:
+   - PaymentBatch.sourceAccount → SimpleAccountDTO
+   - PaymentBatch.currency → SimpleCurrencyDTO
+   - PaymentBatch.createdByUser → SimpleUserDTO
+   - PaymentBatch.batchPayments → List<BatchPaymentResponseDTO>
+
+9. Verify the DTO request fields correctly resolve the related entities:
+   - sourceAccountId OR sourceAccountName → PaymentBatch.sourceAccount
+   - currencyCode → PaymentBatch.currency
+
+10. Pay special attention to UserRepository, AccountRepository and CurrencyRepository.
+    Only keep repository changes if they are genuinely required for DTO/entity mapping.
+    Do not add unnecessary repository methods or unrelated changes.
+
+11. Do NOT create:
+    - ApprovalQueueItemDTO
+    - BatchApprovalActionRequestDTO
+    - BatchApprovalResponseDTO
+
+12. Do NOT modify:
+    - PaymentBatch.java
+    - BatchPayment.java
+    - User.java
+    - Account.java
+    - Currency.java
+    unless there is an actual compile-breaking issue directly caused by the DTO integration.
+
+13. Compare the current implementation with the actual entity field names.
+    If a field name differs from the approved contract, document the mapping rather than redesigning the entity.
+
+14. Check for unnecessary changes and remove only changes that are clearly unrelated to the DTO implementation.
+
+15. Finally run a Maven compile check.
+
+Do NOT make speculative improvements.
+
+After the review, report:
+
+A. DTOs that exactly match the contract.
+B. DTOs that need correction, if any.
+C. Files currently modified.
+D. Whether each modified repository file is actually necessary.
+E. Exact entity-to-DTO and DTO-to-entity mapping decisions.
+F. Whether controller endpoints return DTOs only.
+G. Whether existing service/business logic is preserved.
+H. Whether the project compiles successfully.
+I. Any remaining issue that must be fixed before we proceed.
+
+Only after presenting this review should you make corrections that are strictly necessary.
