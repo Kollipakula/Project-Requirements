@@ -1,0 +1,47 @@
+We are implementing the Create Payroll backend feature in an existing Spring Boot project.
+
+Before making any changes, inspect the existing entity classes:
+- PaymentBatch.java
+- BatchPayment.java
+
+Also inspect the related entities only if necessary to verify the relationships:
+- Account.java
+- Currency.java
+- User.java
+
+First, VERIFY the following. Do not modify anything yet:
+
+1. Verify the primary key / ID mapping in PaymentBatch.java.
+2. Verify the primary key / ID mapping in BatchPayment.java.
+3. Verify that PaymentBatch is the PARENT entity for BatchPayment.
+4. Verify that one PaymentBatch can have MANY BatchPayment records.
+5. Verify that BatchPayment has a MANY-TO-ONE relationship back to PaymentBatch.
+6. Verify that the @JoinColumn used by BatchPayment correctly references the PaymentBatch ID column.
+7. Verify that the relationship will allow us to save multiple employee payment rows under one payroll/payment batch.
+8. Verify that the executionDate field in PaymentBatch is correctly mapped to the execution_date database column.
+9. Check for any obvious JPA mapping problems that could prevent the entities from being persisted.
+
+IMPORTANT:
+- Do NOT redesign the entities.
+- Do NOT create an Employee entity.
+- Do NOT modify approval-related entities or files.
+- Do NOT modify PaymentBatch.java or BatchPayment.java unless there is an actual compilation/JPA mapping error that must be fixed.
+- Do NOT create services, controllers, DTOs, or database tables yet.
+
+After verification, implement ONLY these two repository interfaces:
+
+1. PaymentBatchRepository.java
+   - package: com.axess.payment.repository
+   - extends JpaRepository<PaymentBatch, Long>
+
+2. BatchPaymentRepository.java
+   - package: com.axess.payment.repository
+   - extends JpaRepository<BatchPayment, Long>
+
+Do not add unnecessary custom query methods at this stage.
+
+Finally, compile the backend and report:
+- whether the entity relationships are correct
+- what changes, if any, were necessary
+- whether compilation succeeded
+- which files were changed
