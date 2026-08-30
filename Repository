@@ -45,3 +45,43 @@ Finally, compile the backend and report:
 - what changes, if any, were necessary
 - whether compilation succeeded
 - which files were changed
+
+
+
+
+*********************************
+Before implementing any new code, carefully inspect the existing PaymentBatch.java and BatchPayment.java entities and verify their JPA relationship mappings against the existing project structure.
+
+Do NOT modify any files yet.
+
+Verify specifically:
+
+1. PaymentBatch -> BatchPayment
+   - Confirm that one PaymentBatch can have many BatchPayment records.
+   - Confirm the mappedBy value is correct.
+   - Confirm the JoinColumn/batch_id relationship is correct.
+   - Confirm cascade/orphanRemoval settings if present and whether they are appropriate.
+
+2. BatchPayment -> PaymentBatch
+   - Confirm that each BatchPayment belongs to exactly one PaymentBatch.
+   - Confirm @ManyToOne and @JoinColumn(name = "batch_id") are correct.
+
+3. PaymentBatch relationships with existing entities:
+   - User
+   - Account/source account
+   - Currency
+   Verify that the referenced entity types, JoinColumn names, nullable settings, and relationship annotations match the existing project/database design.
+
+4. Check for bidirectional relationship problems, JSON serialization issues, Hibernate lazy-loading issues, duplicate mappings, or incorrect column names.
+
+5. Inspect the existing project entities and repositories before making any conclusion.
+
+Do not create Service, Controller, DTO, or additional Repository code yet.
+
+At the end, give me:
+- Relationship verification result
+- Any incorrect mappings found
+- Exact files that would need changes, if any
+- Confirmation that the current entities are safe to use for the next Service-layer implementation
+
+Do not make changes unless I explicitly approve them.
