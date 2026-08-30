@@ -397,7 +397,67 @@ The Java JPA entities must be clean, non-duplicated, correctly related, and suit
 Validate the current JPA entity mappings against the existing schema.sql for consistency, but do not modify schema.sql or the entities yet. Identify any differences in tables, columns, constraints, foreign keys, and join tables. The JPA entities must remain the source of truth
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Before making any changes, inspect the existing project structure and all model/entity classes related to PaymentBatch, Account, User, Currency, BatchApproval, and any existing payment/transaction-related classes.
 
+My requirement is ENTITY-FIRST / JPA-FIRST database design.
+
+For the Create Payroll feature, the PaymentBatch represents the overall payroll batch, while the individual employee payment rows inside that batch need to be persisted so that a corporate user can:
+
+1. Create a payroll batch.
+2. Save it as DRAFT.
+3. Leave the application.
+4. Later open Saved Drafts.
+5. Retrieve the complete batch including all employee payment rows.
+6. Edit the draft.
+7. Save the changes.
+8. Finally submit the batch for approval.
+
+We do NOT want a separate Employee master entity unless one already exists and is required by the existing project design. The purpose of the child entity is to persist the individual payment rows belonging to a PaymentBatch.
+
+If the existing project does not already have a suitable entity for these rows, create an appropriate JPA entity named BatchPayment (use a different name only if the existing project naming conventions clearly require it).
+
+Expected relationship:
+
+PaymentBatch (1) ---- (many) BatchPayment
+
+The child payment entity should contain only the fields actually required by the existing Create Payroll UI and project requirements, such as:
+- payment identifier
+- reference to PaymentBatch
+- employee identifier/name if required by the UI
+- beneficiary account
+- bank code
+- amount
+
+Do NOT invent unnecessary fields.
+
+Use proper JPA annotations such as:
+@Entity
+@Table
+@Id
+@Column
+@ManyToOne
+@JoinColumn
+and the appropriate inverse relationship in PaymentBatch.
+
+Follow the existing project's naming conventions, ID strategy, relationship conventions, JSON serialization conventions, and package structure.
+
+Important:
+- Do NOT modify the existing PaymentBatch design unnecessarily.
+- Do NOT create a separate Draft entity.
+- DRAFT should be a status/state of PaymentBatch.
+- BatchApproval remains responsible for batch-level approval; BatchPayment should NOT have its own approval workflow.
+- Do NOT create controllers, services, repositories, DTOs, or frontend changes yet.
+- Do NOT create or modify schema.sql just to support this. The database schema should be generated from the JPA entities/Hibernate configuration.
+- Check whether an equivalent payment/transaction entity already exists before creating BatchPayment.
+- If something is ambiguous or the existing design already supports this requirement, explain it instead of creating duplicate classes.
+
+After inspection, show me:
+1. Whether a new BatchPayment entity is actually required.
+2. The proposed fields and relationships.
+3. The exact files you plan to modify/create.
+
+Only after explaining the plan, make the minimum required model/entity changes.
 
 
 
