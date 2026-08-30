@@ -264,3 +264,104 @@ C. Submit for Approval payload
 D. Field-by-field mapping to PaymentBatch
 E. Field-by-field mapping to BatchPayment
 F. Any mismatches/problems we need to address before creating DTOs
+-----------------------------------
+Before we implement DTOs for the Payment Batch module, I want you to do a complete codebase review first.
+
+IMPORTANT:
+Do NOT modify any code yet.
+Do NOT create DTOs yet.
+Do NOT refactor anything yet.
+
+I want you to inspect the existing frontend and backend implementation and give me a clear assessment of what information is required for the DTO design.
+
+Focus specifically on the Payment Batch flow and inspect:
+
+BACKEND:
+- PaymentBatch entity
+- BatchPayment entity
+- PaymentBatchRepository
+- BatchPaymentRepository
+- PaymentBatchService
+- Any related approval entities/repositories/services
+- PaymentBatchController and BatchPaymentController, if present
+- Existing request/response models or DTOs, if any
+
+FRONTEND:
+- Payment batch listing
+- Batch details page
+- Payment/transaction details
+- Approval page/approval workflow
+- Any screens where batch information, transactions, approval levels, status, remarks, balances, etc. are displayed or submitted
+- API calls made by the frontend for these screens
+
+I previously asked you to scan the frontend and identify what the Payment Batch/Approval UI needs. Use that understanding together with the current backend implementation.
+
+I specifically want you to answer:
+
+1. What data does the frontend actually need from PaymentBatch?
+
+2. What data does the frontend actually need from BatchPayment?
+
+3. Which entity fields are currently being exposed directly but should instead be exposed through DTOs?
+
+4. Which fields should be included in:
+   - PaymentBatchResponseDTO
+   - BatchPaymentResponseDTO
+   - PaymentBatchRequestDTO
+   - BatchPaymentRequestDTO
+   - Approval-related DTOs, if required
+
+5. For every proposed DTO field, tell me:
+   - Entity field it comes from
+   - Database column
+   - Data type
+   - Why the frontend needs it
+   - Whether it is required or optional
+
+6. Check the entity relationships carefully:
+   - PaymentBatch → BatchPayment
+   - PaymentBatch → User
+   - PaymentBatch → Account
+   - PaymentBatch → Currency
+   - PaymentBatch → BatchApproval
+   - BatchPayment → PaymentBatch
+
+   Tell me which relationships should be represented in DTOs as IDs, simple objects, nested DTOs, or not exposed at all.
+
+7. Check for possible problems caused by directly returning JPA entities:
+   - Lazy loading
+   - Hibernate serialization
+   - Circular references
+   - @JsonIgnore
+   - unnecessary database data being exposed
+   - security/data exposure concerns
+
+8. Check the current PaymentBatchService and repositories and tell me whether they already provide everything required for the frontend or whether any repository/service changes will be needed after introducing DTOs.
+
+9. Most importantly, identify the MINIMUM DTO structure required for our current frontend.
+   I don't want unnecessary fields just because they exist in the entity.
+
+10. Give me a final recommended DTO design and explain the data flow:
+
+Frontend
+→ Controller
+→ Request DTO
+→ Service
+→ Entity
+→ Repository
+
+and
+
+Repository
+→ Entity
+→ Service
+→ Response DTO
+→ Controller
+→ Frontend
+
+11. Also identify exactly which existing files/classes will need to be changed when we implement the DTOs.
+
+12. Do NOT write the implementation yet.
+Just give me the analysis, recommended DTO classes, their fields, and the files that need to change.
+
+The goal is to make sure the DTO design matches our CURRENT frontend requirements and existing backend architecture before we start coding.
