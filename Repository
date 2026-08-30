@@ -192,3 +192,75 @@ If the database does NOT support generated IDs:
 After making changes, compile the backend with Maven and report the result.
 
 Do not implement controllers, DTOs, or other layers yet.
+-------------------------------------------
+We are about to implement the DTO and Controller layer for the Create Payroll / Payment Batch feature.
+
+Before creating or modifying ANY files, inspect the existing frontend Create Payroll implementation and the existing backend entities/services.
+
+I want you to ONLY ANALYZE and REPORT. Do not make any code changes.
+
+Specifically inspect the Create Payroll frontend page/component and identify:
+
+1. What fields are entered by the corporate user.
+
+2. What frontend validation is performed before submission.
+
+3. What exact payload/object is created when the user clicks:
+   - Save Draft
+   - Submit for Approval
+
+4. Show the structure of the payload being sent to the backend.
+
+5. For the source account:
+   - Does the frontend send an account ID?
+   - An account number?
+   - An account name?
+   - An entire account object?
+   Show the exact field name and value type.
+
+6. For currency:
+   - Does the frontend send currency ID?
+   - Currency code such as INR/USD?
+   - Currency name?
+   - An entire currency object?
+   Show the exact field name and value type.
+
+7. For the payment/employee rows, identify exactly what is sent for each BatchPayment:
+   - employee ID
+   - employee name
+   - beneficiary account/account number
+   - bank code
+   - amount
+   - any other fields
+
+8. Identify whether executionDate is sent and what format it uses.
+
+9. Identify whether totalAmount and totalTransactions are calculated by the frontend or expected to be calculated by the backend.
+
+10. Identify whether batchId or batchPaymentId are sent from the frontend when creating a new batch.
+
+11. Check whether the frontend currently stores Save Draft data only in localStorage or whether it already calls a backend API.
+
+12. Compare the frontend payload with the current backend entities:
+   - PaymentBatch.java
+   - BatchPayment.java
+   - PaymentBatchService.java
+
+13. Identify any mismatch between frontend field names/types and backend field names/types.
+
+IMPORTANT:
+- Do NOT create DTOs.
+- Do NOT create controllers.
+- Do NOT modify frontend or backend code.
+- Do NOT make assumptions.
+- Inspect the actual code and report what is currently happening.
+- If something cannot be determined from the existing code, explicitly say "Cannot determine from current code."
+
+At the end, provide:
+
+A. Current Create Payroll frontend payload
+B. Save Draft payload
+C. Submit for Approval payload
+D. Field-by-field mapping to PaymentBatch
+E. Field-by-field mapping to BatchPayment
+F. Any mismatches/problems we need to address before creating DTOs
