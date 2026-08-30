@@ -365,3 +365,61 @@ Repository
 Just give me the analysis, recommended DTO classes, their fields, and the files that need to change.
 
 The goal is to make sure the DTO design matches our CURRENT frontend requirements and existing backend architecture before we start coding.
+
+
+-----------------------------------
+Before implementing any DTOs, I want you to do one final read-only review of the current project and give me the exact DTO contract we should implement.
+
+You have already reviewed the frontend and identified the current mismatches between the frontend payload and the backend PaymentBatch/BatchPayment entities.
+
+I have now confirmed that the current backend has:
+- PaymentBatch entity
+- BatchPayment entity
+- PaymentBatchRepository
+- BatchPaymentRepository
+- PaymentBatchService with saveDraft, createAndSubmit, updateDraft, submitForApproval and loadBatchWithPayments
+- Existing validation and PaymentBatch -> BatchPayment relationship
+
+IMPORTANT:
+1. Do NOT modify any code.
+2. Do NOT create DTO classes yet.
+3. Do NOT modify entities, repositories, services, controllers, database schema, or frontend.
+4. This must be a READ-ONLY analysis.
+5. Base your answer on the actual current frontend and backend code, not assumptions.
+6. If you need to inspect any existing file to make the decision, tell me exactly which file/class you need me to provide. Do not guess.
+
+I want you to answer these questions:
+
+1. Is the current backend foundation ready for DTO implementation?
+2. What exact DTO classes are required RIGHT NOW for the current Create Payroll/Draft/Submit flow?
+3. Give the final field-by-field structure for each DTO:
+   - DTO class name
+   - field name
+   - Java type
+   - required/optional
+   - frontend field it maps to
+   - backend entity field it maps to
+   - whether it is request or response only
+4. Clearly separate:
+   - Request DTOs
+   - Response DTOs
+   - DTOs that are NOT needed yet
+5. Show the exact JSON request payload expected from the current frontend for:
+   - Save Draft
+   - Create/Submit
+   - Update Draft
+6. Show the exact JSON response payload the frontend should receive.
+7. Explain how Account and Currency should be represented:
+   - what frontend sends
+   - what the DTO accepts
+   - how the service should eventually map it to Account/Currency entities
+8. Decide the canonical status values for the DTO contract. Specifically resolve the current SUBMITTED vs PENDING mismatch. Explain which value should be used and why based on the existing code/frontend.
+9. Explain how PaymentBatch -> BatchPayment should be represented in request and response DTOs.
+10. Confirm whether sourceAccount, currency, createdByUser, batchApprovals and other related JPA entities should be exposed directly. If not, specify the safe DTO representation.
+11. Confirm whether we need any repository changes immediately for DTO implementation, or whether the current repositories are sufficient.
+12. Confirm whether the current PaymentBatchService business logic can remain mostly unchanged and simply be adapted to DTO input/output.
+13. Identify any issue that MUST be fixed before DTO implementation starts.
+
+Finally, give me a single "FINAL APPROVED DTO CONTRACT" section containing only the DTO classes and their fields that we should actually implement now.
+
+Do not provide implementation code yet. I want to approve the contract first.
