@@ -85,3 +85,69 @@ At the end, give me:
 - Confirmation that the current entities are safe to use for the next Service-layer implementation
 
 Do not make changes unless I explicitly approve them.
+
+--------------------------------------------------Now that the JPA entity relationships have been verified and the PaymentBatchRepository and BatchPaymentRepository are implemented, implement the service layer for PaymentBatch and BatchPayment.
+
+Now that the JPA entity relationships have been verified and the PaymentBatchRepository and BatchPaymentRepository are implemented, implement the service layer for PaymentBatch and BatchPayment.
+
+IMPORTANT:
+- Inspect the existing project structure, entities, repositories, DTOs, services and controllers before making changes.
+- Do not redesign or modify the existing entity mappings unless absolutely required for compilation.
+- Do not create duplicate classes.
+- Follow the existing coding style and patterns used by the other services in this project.
+
+Implement PaymentBatchService.java with the following responsibilities:
+
+1. CREATE / SAVE PAYMENT BATCH
+   - Create a PaymentBatch with its required fields.
+   - Support multiple BatchPayment child records under the same PaymentBatch.
+   - Since there is no cascade/orphanRemoval, explicitly save the PaymentBatch first and then save each BatchPayment using BatchPaymentRepository.
+   - Ensure the manually assigned IDs are handled consistently with the existing entity design.
+   - Set the appropriate initial status for a newly saved draft.
+
+2. LOAD PAYMENT BATCH
+   - Load a PaymentBatch by its ID.
+   - Load its associated BatchPayment records.
+   - Return the batch together with its child payment rows.
+
+3. UPDATE PAYMENT BATCH
+   - Allow an existing draft batch to be edited.
+   - Update existing BatchPayment rows.
+   - Handle newly added child rows.
+   - Do not delete existing child rows unless the existing project design clearly requires it.
+
+4. SUBMIT FOR APPROVAL
+   - A completed PaymentBatch should be able to go directly from creation to submission for approval.
+   - Saving as a draft must NOT be mandatory before submission.
+   - Validate that required batch/payment information is present.
+   - Change the batch status to the appropriate "pending approval" status used by the existing project.
+   - Do not implement the actual multi-level approval processing yet; only prepare the batch for the existing approval workflow.
+
+5. TRANSACTION SAFETY
+   - Use @Transactional where appropriate.
+   - Ensure that if saving the parent succeeds but saving a child fails, the transaction rolls back appropriately.
+
+6. ERROR HANDLING
+   - Use the existing project's exception/error-handling approach.
+   - Do not introduce a new exception framework unless the project already uses one.
+
+7. DO NOT implement the controller yet.
+8. DO NOT change the frontend yet.
+9. DO NOT modify unrelated services or entities.
+
+Before changing files, inspect:
+- PaymentBatch.java
+- BatchPayment.java
+- PaymentBatchRepository.java
+- BatchPaymentRepository.java
+- existing Service classes
+- PaymentRequest.java
+- existing approval-related entities/services
+- existing status fields/enums
+
+After implementation:
+- compile the backend
+- report which files were changed
+- explain the implemented methods
+- identify any assumptions about status values, IDs, or DTO structure
+- do not make unrelated changes.
