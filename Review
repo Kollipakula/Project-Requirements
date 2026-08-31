@@ -1,40 +1,40 @@
   
-Please do the following:
+Before I click Keep on these changes, perform one final read-only review of the proposed changes.
 
-1. Run the complete backend Maven test suite using the existing JUnit/Spring Boot test setup.
+Do NOT make any further modifications.
 
-2. Inspect every test failure and determine whether it is:
-   - a real production-code failure,
-   - a test setup/configuration failure,
-   - an unnecessary Mockito stubbing failure,
-   - or a test discovery/execution problem.
+Please verify:
 
-3. Fix ONLY the test configuration/test code necessary to make the existing tests valid.
-   Do NOT modify PaymentBatchController.java, PaymentBatchService.java, repositories, DTOs, database logic, or any production behavior just to make tests pass.
+1. Show the exact changes made in:
+   - PaymentBatchServiceTest.java
+   - PaymentBatchControllerTest.java
+   - TrainingApplicationTests.java
+   - pom.xml
 
-4. For PaymentBatchServiceTest:
-   - inspect the setUp() method,
-   - identify the unnecessary Mockito stubbings causing UnnecessaryStubbingException,
-   - move stubbing into only the tests that actually require it, or otherwise correct the test setup without weakening Mockito strictness unnecessarily.
+2. Confirm explicitly that NO production source files were changed, especially:
+   - PaymentBatchController.java
+   - PaymentBatchService.java
+   - repositories
+   - DTOs
+   - entities
+   - database/schema files
+   - application runtime configuration
 
-5. For TrainingApplicationTests:
-   - determine why Spring Boot cannot find @SpringBootConfiguration,
-   - correct the test package/configuration so the test can locate the existing Spring Boot application class,
-   - do not create a duplicate application class.
+3. For each changed test file, explain why the change was necessary and confirm that the test's original intent/coverage has not been weakened.
 
-6. For PaymentBatchControllerTest:
-   - determine why the test source exists but no Surefire report/executed test is being produced,
-   - verify that the test is actually discovered and executed by Maven.
-   - If the test itself is invalid, explain exactly why before changing it.
+4. For pom.xml, explain exactly what dependency/configuration was added or changed and why it is required.
 
-7. After making only the necessary test-side corrections, run:
-   mvn test
+5. Confirm that Mockito strict stubbing has NOT been disabled or weakened globally.
 
-8. Report the final result as:
-   - Tests run
-   - Passed
-   - Failed
-   - Errors
-   - Skipped
+6. Confirm that no tests were deleted, disabled, ignored, skipped, or annotated in a way that prevents execution just to achieve 9/9 passing.
 
-9. Also provide a clear list of every file you changed and why.
+7. Run `mvn test` one final time and report:
+   Tests run:
+   Passed:
+   Failed:
+   Errors:
+   Skipped:
+
+8. Confirm that the 9/9 result represents genuinely executed tests, not merely tests being skipped or excluded.
+
+Do not change anything. I only want the verification report.
