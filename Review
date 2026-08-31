@@ -1,52 +1,108 @@
-  Now do NOT make broad architectural changes.
+  Based on the latest read-only review, fix ONLY the four CRITICAL issues listed below.
 
-Review the current implementation again after the stabilization changes you just made.
+Do NOT modify unrelated functionality.
+Do NOT undo any changes from the previous stabilization pass.
+Do NOT implement the HIGH or MEDIUM items yet.
+Do NOT commit anything.
 
-Focus specifically on the payroll/payment batch flow from frontend to backend and verify the complete end-to-end logic:
+1. COMPLETE THE BACKEND DRAFT LIFECYCLE
 
-1. Create payroll/payment batch
-2. Save draft
-3. Load/edit draft
-4. Submit payroll
-5. Frontend payload → backend DTO mapping
-6. Payment row validation
-7. Calculate the total from ALL payment rows
-8. Compare calculated row total with batch totalAmount
-9. Resolve the source account
-10. Retrieve source account availableBalance
-11. Compare the calculated payroll total against availableBalance
-12. Reject submission when availableBalance is insufficient
-13. Validate currency/account consistency
-14. Validate duplicate employee/beneficiary rows if required by the current project requirements
-15. Validate batch status/lifecycle rules
-16. Verify error responses returned to the frontend are appropriate and not incorrectly converted to HTTP 500
-17. Verify frontend correctly displays validation and insufficient-balance errors
-18. Verify DTOs, entities, repositories, services, controllers and frontend services are consistent.
+Files:
+- frontend CreatePayroll.js
+- frontend paymentService.js
+- backend PaymentBatchController.java
+- backend PaymentBatchService.java
 
-IMPORTANT:
-- Do not change code yet.
-- Do not refactor unrelated modules.
-- Do not add new architecture.
-- Do not assume something is correct just because it compiles.
-- Trace the actual execution flow and identify any logical, business-rule, integration, security, or data-consistency gaps.
+Implement this exact lifecycle:
 
-Give me a structured code-review report with:
-CRITICAL
-HIGH
-MEDIUM
-LOW
+A. First Save Draft:
+- Call POST /payments/payroll/draft.
+- Receive the backend-created batchId.
+- Store that backend batchId in the local draft object/localStorage.
 
-For every issue include:
-- exact file and method
-- what is wrong
-- why it matters
-- concrete recommended fix
+B. Subsequent Save Draft:
+- If the draft already has a backend batchId, call:
+  PUT /payments/payroll/draft/{batchId}
+- Do NOT create another draft with POST.
 
-At the end provide:
-1. Already correct
-2. Still missing
-3. Potential hidden bugs
-4. Manual test cases I should run
-5. Whether the payroll flow is currently safe to proceed with frontend testing
+C. Load Draft:
+- If a stored draft has a backend batchId, load the corresponding backend draft when appropriate.
+- Backend should be the source of truth for an existing saved draft.
+- LocalStorage can remain as a convenience/cache.
 
-Do not modify any files until I explicitly approve the fixes.
+D. Submit Draft:
+- If the loaded draft has a backend batchId, call:
+  POST /payments/payroll/{batchId}/submit
+- Do NOT call the new-batch submit endpoint for an existing draft.
+
+E. New Payroll:
+- If there is no existing batchId, preserve the current create-and-submit flow:
+  POST /payments/payroll/submit
+
+Make sure the response from the backend is actually inspected so the frontend obtains the real batchId.
+
+Do not invent new endpoints. Use the existing controller mappings.
+
+2. PROVIDE DETERMINISTIC DEV DATA
+
+Files to inspect:
+- application.properties
+- schema.sql
+- data.sql if present
+- UserRepository
+- AccountRepository
+- Currency entities/repositories
+
+The review says a fresh H2 database can have no users/accounts/currencies while the service requires them.
+
+Implement the smallest safe development initialization solution so a fresh local development run has the required user, source account, and currency records.
+
+Do NOT hard-code seed data inside PaymentBatchService.
+Do NOT affect production configuration unnecessarily.
+Prefer a Spring Boot development profile or proper data initialization.
+
+3. FIX FRONTEND/BACKEND API BASE URL
+
+Inspect:
+- frontend api.js
+- apiClient configuration
+- package.json
+- proxy configuration
+- PaymentBatchController.java
+
+Ensure the frontend payroll requests actually reach the existing backend mappings.
+
+Use the existing backend paths rather than inventing new ones.
+
+The important existing payroll paths include:
+- POST /payments/payroll/draft
+- PUT /payments/payroll/draft/{batchId}
+- POST /payments/payroll/submit
+- POST /payments/payroll/{batchId}/submit
+
+If the project uses a CRA proxy, configure it consistently.
+If it uses REACT_APP_API_BASE_URL, configure/use it consistently.
+
+Do not support multiple conflicting API contracts.
+
+4. VERIFY EVERYTHING AFTER THE CHANGES
+
+Run:
+- Maven compile
+- Maven tests if possible
+- frontend diagnostics/build if possible
+
+Also inspect the final code to ensure:
+- first draft save creates one backend batch
+- second draft save updates the same batch
+- loading an existing draft preserves batchId
+- submitting an existing draft uses /{batchId}/submit
+- new payroll still uses /submit
+
+At the end report:
+1. Files changed
+2. Exactly which critical issues were fixed
+3. Test/build results
+4. Any remaining issues
+
+Do not proceed to HIGH/MEDIUM fixes yet.
