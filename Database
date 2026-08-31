@@ -536,3 +536,55 @@ Report only what is currently correct and what still needs to be changed. Do not
 Implement only the payroll total validation identified in the review. In PaymentBatchService, calculate the total amount by summing all payment-row amounts and validate it against paymentBatch.getTotalAmount(). Do not trust the request totalAmount alone. If the calculated row sum does not equal the batch total, reject the submission with a clear validation error. Do not change the insufficient-balance logic or HTTP exception mapping yet. Keep the change minimal and consistent with the existing code
 +++++++++++++++++++
 Implement the payroll amount validation in PaymentBatchService. First calculate the total payroll amount by summing all payment-row amounts. Validate that this calculated row total matches paymentBatch.getTotalAmount(); do not trust the request totalAmount alone. Then use this validated payroll total to compare against the source account's availableBalance. If the payroll total exceeds the available balance, reject the submission with the existing insufficient-balance validation. Do not change the HTTP exception mapping yet. Keep the changes minimal and consistent with the existing code.
++++++++++++++++++++++++++++++++++++Perform a complete code review of the current Corporate Banking Payment/Payroll project. Do not modify, create, or delete any files. This is a review only.
+Review the complete current implementation across backend, frontend, DTOs, entities/models, services, controllers, repositories, database-related code, validation, exception handling, and API request/response flow.
+Focus especially on whether the implementation is logically complete and consistent with the project requirements.
+Check for:
+Account/source account
+Is the correct source/payroll account retrieved?
+Is availableBalance correctly used?
+Is the calculated payroll total compared against the available balance?
+Is insufficient balance correctly prevented?
+Payroll/payment batch
+Are payment-row amounts correctly summed?
+Does the calculated sum match the batch totalAmount?
+Are null, zero, negative, and invalid amounts handled?
+Are duplicate or invalid payment rows handled where required?
+DTOs
+Are request and response DTOs correct and consistent with the entity/model?
+Are any required fields missing?
+Are there fields being trusted from the frontend that should instead be calculated or validated by the backend?
+Backend business logic
+Check services, controllers, repositories and entity relationships.
+Look for missing business validations, incorrect logic, unreachable code, duplicated logic, or inconsistent behavior.
+Check create, save-draft, update-draft, submit, approval and related flows.
+Exception handling/API responses
+Check whether business-rule failures have appropriate exceptions and HTTP status codes.
+Check specifically the insufficient-balance response.
+Check for cases where a business error could incorrectly become HTTP 500.
+Frontend/backend integration
+Verify that frontend API requests match backend endpoints and DTOs.
+Check request/response field names and types.
+Check whether frontend validation incorrectly replaces or bypasses backend validation.
+Database/data integrity
+Check entity relationships, IDs, foreign keys, required fields, and persistence logic.
+Identify any possibility of inconsistent or invalid data being stored.
+Security and reliability
+Check authorization/role validation where applicable.
+Check whether sensitive or important business values are being trusted from the frontend.
+Check transaction boundaries and potential partial updates where relevant.
+Overall project completeness
+Compare the implementation with the requirements already present in the project.
+Identify anything that is missing or only partially implemented.
+Do not make any changes.
+Categorize findings as:
+🔴 Critical — must fix
+🟠 High — should fix
+🟡 Medium — recommended
+🟢 Low — optional/improvement
+For every finding, provide:
+File and method
+What is wrong or missing
+Why it matters
+Recommended fix
+At the end, provide a "Nothing Missing / Remaining Work" checklist showing what is already correct and what still needs implementation.
