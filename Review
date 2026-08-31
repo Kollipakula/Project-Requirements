@@ -106,3 +106,75 @@ At the end report:
 4. Any remaining issues
 
 Do not proceed to HIGH/MEDIUM fixes yet.
+
+
+----------------------
+Please thoroughly test and review the Payroll Draft/Submit API integration in this project.
+
+DO NOT make any code changes yet. First analyze and report the problems.
+
+I need you to verify the complete flow between React frontend and Spring Boot backend.
+
+Backend:
+- Controller base path should be /payments/payroll
+- Draft endpoint should be POST /payments/payroll/draft
+- Submit endpoint should be POST /payments/payroll/submit
+- Verify the actual controller mappings and confirm these endpoints really exist.
+- Check the service and repository layers used by these endpoints.
+- Verify how X-User-Id is handled and whether the user ID must exist in the database.
+
+Frontend:
+- Inspect api.js and all payroll/payment service files.
+- Find every place where /payments/payroll, /draft, and /submit are constructed.
+- Check whether the frontend is accidentally using /payment/payroll instead of /payments/payroll.
+- Check whether any endpoint is incorrectly written as /payroll/draft, /payroll/submit, etc.
+- Check the Axios baseURL.
+- Check the React package.json proxy setting.
+- Determine whether the current proxy configuration conflicts with the Axios baseURL.
+- Check how X-User-Id is obtained from authService/session and what value is actually being sent.
+- Check whether the frontend request URL exactly matches the backend endpoint.
+
+Testing:
+1. Test POST /payments/payroll/draft using the backend directly.
+2. Test POST /payments/payroll/submit using the backend directly.
+3. Use a valid X-User-Id that actually exists in the database.
+4. Use a minimal valid request body based on the DTO.
+5. Compare the result with the request made from the React frontend.
+6. Check whether the frontend request is reaching port 8080.
+7. Check whether the request is getting 404, 400, 500, CORS error, or another response.
+8. Check the browser Network request URL, method, request headers, request body, and response.
+9. Check whether the Spring Boot logs show the incoming frontend request.
+
+Also investigate these errors I am currently seeing:
+
+- "Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of text/html"
+- 404 for payments/payroll/draft
+- Previously I also received CORS errors when calling http://localhost:8080 from http://localhost:3000
+- Swagger currently reaches http://localhost:8080/payments/payroll/draft but returns:
+  400 Bad Request
+  "User not found: 1"
+
+Important:
+- Do NOT assume that the proxy is the cause.
+- Do NOT change /payments/payroll to /payment/payroll.
+- Do NOT modify the backend endpoint just to make the frontend work.
+- Do NOT change code unless you first identify the exact root cause.
+- Distinguish frontend configuration problems, backend endpoint problems, CORS problems, and database/user-data problems.
+
+At the end, give me a clear report in this format:
+
+1. BACKEND STATUS: PASS/FAIL
+2. FRONTEND STATUS: PASS/FAIL
+3. API URL STATUS: PASS/FAIL
+4. PROXY CONFIGURATION: CORRECT/INCORRECT
+5. CORS CONFIGURATION: CORRECT/INCORRECT
+6. X-USER-ID: CORRECT/INCORRECT
+7. DATABASE USER: PASS/FAIL
+8. DRAFT API TEST: PASS/FAIL
+9. SUBMIT API TEST: PASS/FAIL
+10. MIME/React error: ROOT CAUSE
+11. 404 error: ROOT CAUSE
+12. Exact files/lines that need changes
+13. Exact recommended changes, but DO NOT apply them yet.
+
+Please be very careful and base the conclusions on the actual code and test results, not assumptions.
