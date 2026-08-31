@@ -521,7 +521,8 @@ Do not modify any code. Based on the existing project, user stories, DTOs, entit
 
 
 Implement the insufficient-balance validation based on your analysis. Before making changes, re-check the existing PaymentBatchService, PaymentBatch, Account, and DTO classes. Add the validation in validateBatchForSubmission(...) so that the payroll batch total is compared against the source account's available balance. Do not change existing API contracts, DTO field names, database entities, or unrelated functionality. Create a dedicated InsufficientBalanceException only if required by the existing project structure. Do not modify the frontend. After implementation, explain exactly what files and lines were changed and how I can test the insufficient-balance scenario through Swagger.
-
+----------------------------
+Review the current implementation after the insufficient-balance validation was added. Do not modify any code. Verify that the payroll total is correctly derived/validated against payment-row amounts, that available balance is correctly retrieved from the source account, and that insufficient balance is handled with the appropriate HTTP response. Report only any remaining issues."
 
 
 
