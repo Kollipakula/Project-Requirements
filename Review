@@ -1,143 +1,40 @@
-  Before making ANY code changes, I want you to perform a complete diagnostic review of the payroll payment flow.
+  
+Please do the following:
 
-Do NOT modify, create, delete, or auto-fix any files yet.
+1. Run the complete backend Maven test suite using the existing JUnit/Spring Boot test setup.
 
-The current intended API contract is:
+2. Inspect every test failure and determine whether it is:
+   - a real production-code failure,
+   - a test setup/configuration failure,
+   - an unnecessary Mockito stubbing failure,
+   - or a test discovery/execution problem.
 
-POST /payments/payroll/draft
-POST /payments/payroll/submit
-POST /payments/payroll/{batchId}/submit
-POST /payments/payroll/{batchId}
+3. Fix ONLY the test configuration/test code necessary to make the existing tests valid.
+   Do NOT modify PaymentBatchController.java, PaymentBatchService.java, repositories, DTOs, database logic, or any production behavior just to make tests pass.
 
-Please inspect the actual frontend and backend code and verify whether the following files really need changes:
+4. For PaymentBatchServiceTest:
+   - inspect the setUp() method,
+   - identify the unnecessary Mockito stubbings causing UnnecessaryStubbingException,
+   - move stubbing into only the tests that actually require it, or otherwise correct the test setup without weakening Mockito strictness unnecessarily.
 
-1. frontend/public/index.html
-2. frontend/src/services/paymentService.js
-3. frontend/src/services/api.js
-4. frontend/package.json
-5. backend PaymentBatchController.java
-6. backend PaymentBatchService.java
-7. application.properties
-8. application-dev.properties
-9. data-dev.sql
+5. For TrainingApplicationTests:
+   - determine why Spring Boot cannot find @SpringBootConfiguration,
+   - correct the test package/configuration so the test can locate the existing Spring Boot application class,
+   - do not create a duplicate application class.
 
-For each file, tell me:
+6. For PaymentBatchControllerTest:
+   - determine why the test source exists but no Surefire report/executed test is being produced,
+   - verify that the test is actually discovered and executed by Maven.
+   - If the test itself is invalid, explain exactly why before changing it.
 
-- Whether it actually needs to be changed
-- The exact reason
-- The current relevant code/mapping
-- What the correct expected behavior should be
-- Whether the problem is frontend, backend, database, proxy/CORS, or configuration
-- Do not suggest unnecessary changes
+7. After making only the necessary test-side corrections, run:
+   mvn test
 
-Also verify the following specifically:
-
-1. Confirm the exact Spring controller mappings for:
-   POST /payments/payroll/draft
-   POST /payments/payroll/submit
-
-2. Confirm whether the frontend is calling exactly those same paths.
-   There must NOT be an accidental /payment/payroll or /payroll path.
-
-3. Inspect api.js and paymentService.js and determine whether Axios is using:
-   - relative URLs through the CRA proxy, OR
-   - an explicit http://localhost:8080 base URL.
-   Identify which approach the project is currently designed to use.
-
-4. Inspect package.json and index.html and determine whether the frontend is CRA or Vite.
-   Check whether index.html is using the correct bootstrap mechanism for the actual project.
-
-5. Check the X-User-Id flow.
-   The frontend currently appears to send X-User-Id: 1.
-   Verify how that value is obtained from authService/session and how the backend resolves it.
-
-6. Check the database/user data.
-   Verify whether user ID 1 actually exists in the database used by the running Spring application.
-   Do not assume that data-dev.sql is automatically being loaded.
-
-7. Explain why Swagger receives:
-   400 User not found: 1
-
-   but the browser request appears to receive:
-   404 or 500.
-
-8. Determine whether CORS is actually the problem or whether the frontend is supposed to use the configured proxy instead.
-
-9. Test the backend endpoints if possible without modifying the code.
-   Test both:
-   POST /payments/payroll/draft
-   POST /payments/payroll/submit
-
-   Use a valid request body and X-User-Id value only if such a valid user exists.
-
-10. Check whether the 404 is actually coming from Spring or from the frontend development server/proxy.
-
-At the end, give me a diagnostic report in this exact structure:
-
-A. BACKEND MAPPING STATUS
-B. FRONTEND ENDPOINT STATUS
-C. FRONTEND BOOTSTRAP STATUS
-D. PROXY/CORS STATUS
-E. X-USER-ID STATUS
-F. DATABASE/USER STATUS
-G. DRAFT API TEST
-H. SUBMIT API TEST
-I. FILES THAT ACTUALLY NEED CHANGES
-J. FILES THAT DO NOT NEED CHANGES
-K. EXACT ROOT CAUSE(S)
-
-Most importantly:
-DO NOT MODIFY ANY FILES.
-DO NOT "fix" anything yet.
-I only want the verified diagnosis and testing results first.
-
-
-
-++++++++++++
-Before Sahil's task is implemented, I want to establish a baseline for the current code.
-
-DO NOT modify, create, delete, or fix any files.
-
-Please run the existing backend unit tests/JUnit tests for this project.
-
-1. Identify the testing framework being used (JUnit 4/5, Mockito, Spring Boot Test, etc.).
-2. Run all existing backend tests.
-3. Report:
-   - Total tests
+8. Report the final result as:
+   - Tests run
    - Passed
    - Failed
    - Errors
    - Skipped
-4. For every failed test, give:
-   - Test class
-   - Test method
-   - Exact failure/error
-   - Whether it is related to the payroll/payment functionality
-5. Specifically identify whether there are existing tests for:
-   - PaymentBatchController
-   - PaymentBatchService
-   - saveDraft
-   - submit
-   - user/X-User-Id resolution
-   - database/repository behavior
-6. Do NOT create new tests.
-7. Do NOT modify existing tests.
-8. Do NOT modify production code.
-9. Do NOT change database/configuration files.
-10. Do not interpret a failed test as something to fix yet. Just report the results.
 
-At the end, give me a clear baseline:
-
-BASELINE TEST RESULT
-- Tests run:
-- Passed:
-- Failed:
-- Errors:
-- Skipped:
-
-PAYROLL-RELATED TEST RESULT
-- Passing:
-- Failing:
-- No tests found:
-
-Then explain whether the current code has a clean unit-test baseline before Sahil's changes.
+9. Also provide a clear list of every file you changed and why.
