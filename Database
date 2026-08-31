@@ -469,6 +469,45 @@ What happens when the payroll amount is greater than the available balance.
 Whether an appropriate exception/error response is already implemented for insufficient balance.
 If this validation is missing, tell me exactly where it should be added and what existing classes/methods would be involved.
 Do not implement or modify anything. I only want a code review and explanation of the current behavior.
+---------------------------Review the existing Create Payroll / Payment Batch flow specifically for account balance validation.
+
+Do NOT modify or implement any code yet.
+
+I need to verify the business logic before making changes.
+
+Please inspect the existing:
+- PaymentBatchService
+- PaymentBatch
+- BatchPayment
+- Account
+- PaymentBatchRequestDTO
+- relevant repositories
+- existing exception handling / ControllerAdvice
+
+Answer these questions based only on the current code:
+
+1. Where is the source/payroll account resolved during Create Payroll?
+2. Where is its available/current balance retrieved?
+3. Is the total payroll amount calculated by summing all payment amounts?
+4. Or is totalAmount simply trusted from the request DTO?
+5. Is there currently any comparison between:
+   total payroll amount
+   and
+   source account available balance?
+6. What exactly happens today if payroll total is greater than available balance?
+7. Is there already an appropriate exception for insufficient funds/balance?
+8. Where is the best existing validation method/location to add this check?
+9. What files/methods would need to change?
+10. Would adding this validation affect Quick Payment or other existing flows?
+
+Then propose the recommended implementation approach, including:
+- validation location
+- calculation approach
+- exception type
+- expected HTTP status
+- example error response
+
+Do NOT implement anything yet. I only want the analysis and proposed approach.
 
 
 
