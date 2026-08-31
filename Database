@@ -532,5 +532,5 @@ The payroll total is compared against the available balance before submission.
 If the payroll total exceeds the available balance, the submission is blocked.
 The insufficient-balance error is mapped to the appropriate HTTP response.
 Report only what is currently correct and what still needs to be changed. Do not make any changes.
-
-
+-------------------
+Implement only the payroll total validation identified in the review. In PaymentBatchService, calculate the total amount by summing all payment-row amounts and validate it against paymentBatch.getTotalAmount(). Do not trust the request totalAmount alone. If the calculated row sum does not equal the batch total, reject the submission with a clear validation error. Do not change the insufficient-balance logic or HTTP exception mapping yet. Keep the change minimal and consistent with the existing code
