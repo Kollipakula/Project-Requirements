@@ -458,7 +458,17 @@ After inspection, show me:
 3. The exact files you plan to modify/create.
 
 Only after explaining the plan, make the minimum required model/entity changes.
-
+------------------------------------
+Please review the existing Create Payroll Batch implementation specifically for account balance validation. Do not modify any code.
+Check the complete flow in PaymentBatchService and related classes and determine:
+Where the source/payroll account is retrieved.
+Whether the account's available/current balance is retrieved.
+Whether the total payroll batch amount is calculated.
+Whether the batch amount is compared with the account balance.
+What happens when the payroll amount is greater than the available balance.
+Whether an appropriate exception/error response is already implemented for insufficient balance.
+If this validation is missing, tell me exactly where it should be added and what existing classes/methods would be involved.
+Do not implement or modify anything. I only want a code review and explanation of the current behavior.
 
 
 
