@@ -524,6 +524,13 @@ Implement the insufficient-balance validation based on your analysis. Before mak
 ----------------------------
 Review the current implementation after the insufficient-balance validation was added. Do not modify any code. Verify that the payroll total is correctly derived/validated against payment-row amounts, that available balance is correctly retrieved from the source account, and that insufficient balance is handled with the appropriate HTTP response. Report only any remaining issues."
 
-
+---------------
+Review the current implementation after the insufficient-balance validation was added. Do not modify any code yet. Verify that:
+The payroll totalAmount is correctly calculated/validated against the sum of all payment-row amounts.
+The source account's availableBalance is correctly retrieved.
+The payroll total is compared against the available balance before submission.
+If the payroll total exceeds the available balance, the submission is blocked.
+The insufficient-balance error is mapped to the appropriate HTTP response.
+Report only what is currently correct and what still needs to be changed. Do not make any changes.
 
 
