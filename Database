@@ -510,7 +510,8 @@ Then propose the recommended implementation approach, including:
 Do NOT implement anything yet. I only want the analysis and proposed approach.
 
 
-
+-------------------------------
+Do not modify any code. Based on the existing project, user stories, DTOs, entities, and service implementation, verify the expected insufficient-balance behaviour for Create Payroll Batch. Specifically determine whether the source account's availableBalance must be compared with the payroll batch total, at which stage this validation should happen (create or submit), whether totalAmount should be calculated from payment rows or trusted from the request DTO, and what exception/HTTP response should be returned when the payroll amount exceeds the available balance. Give me your findings and exact recommended implementation location only. Do not implement anything
 
 
 
