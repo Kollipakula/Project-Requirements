@@ -1,120 +1,52 @@
-Act as a senior full-stack code reviewer and implementation agent for this corporate banking payment/payroll project.
+  Now do NOT make broad architectural changes.
 
-I have already implemented and verified the following payroll submission validations:
-- payment rows must contain valid positive amounts
-- payment-row amounts are summed into a calculatedTotal
-- calculatedTotal must match paymentBatch.totalAmount
-- calculatedTotal is compared against the source account availableBalance
-- insufficient balance is rejected
-- source account is resolved before submission validation
-- terminal payment-batch status checks exist
-- controller uses request/response DTOs instead of exposing JPA entities
-- backend currently compiles successfully
+Review the current implementation again after the stabilization changes you just made.
 
-DO NOT remove or unnecessarily rewrite these existing validations.
+Focus specifically on the payroll/payment batch flow from frontend to backend and verify the complete end-to-end logic:
 
-Now inspect the ENTIRE project (backend + frontend + DTOs + entities + repositories + controllers + services + configuration + tests) and perform a careful production-style code review.
-
-For every issue you find:
-1. Identify the exact file and method.
-2. Explain the logical/business problem.
-3. Determine whether it is actually required by the existing project requirements.
-4. Do not invent requirements.
-5. Do not change unrelated functionality.
-
-Prioritize these areas:
-
-1. FRONTEND/BACKEND CONTRACT
-- Compare the frontend payroll create/submit payload with PaymentBatchRequestDTO and BatchPaymentRequestDTO.
-- Verify every field name, nesting, type, and required field.
-- Check source account, currency, payments, totalAmount, status, batchId, etc.
-- Make the frontend payload exactly compatible with the backend DTO contract.
-- Do not maintain two conflicting payload formats.
-
-2. ERROR HANDLING
-- Inspect all business validation exceptions thrown by the payroll/payment services.
-- Add centralized exception handling if missing.
-- Ensure validation errors and insufficient-balance errors return an appropriate client error such as HTTP 400 or 422 rather than an accidental 500.
-- Use a consistent API error response structure.
-- Do not expose stack traces or internal implementation details.
-
-3. SECURITY
-- Inspect SecurityConfig and all payment/payroll endpoints.
-- Determine whether X-User-Id is being trusted directly from the client.
-- If authentication/authorization is actually required by the project, implement it consistently.
-- Add appropriate role/authorization checks.
-- Do not invent a completely different authentication architecture without first checking the existing project structure.
-
-4. SOURCE ACCOUNT RESOLUTION
-- Inspect resolveAccount.
-- Prevent ambiguous account-name lookup from selecting an arbitrary account.
-- Prefer sourceAccountId for submission where appropriate.
-- If account-name lookup is required, make the behavior deterministic and safe.
-
-5. BATCH ID / ENTITY ID SAFETY
-- Inspect mapRequestToBatch and all create/update/submit flows.
-- Ensure a client cannot unexpectedly control a persistence identity during creation.
-- For existing drafts, use the appropriate path/batch identifier.
-- Preserve legitimate update behavior.
-
-6. PAYMENT ROW DATABASE ACCESS
-- Inspect findBatchPaymentsByBatchId.
-- If it currently uses findAll and filters in memory, determine whether a repository query by batch ID should be added.
-- Implement the repository-level query if appropriate.
-
-7. DRAFT FLOW
-- Inspect CreatePayroll.js, paymentService.js and backend draft APIs.
-- Determine whether save-draft functionality is only localStorage-based or properly persisted through the backend.
-- Align frontend draft actions with backend DTOs and APIs.
-- Do not break the existing submit flow.
-
-8. BUSINESS VALIDATIONS
-Review whether the following are required by the actual project requirements:
-- duplicate employee IDs
-- duplicate beneficiary accounts
-- source-account currency vs payroll currency
-- other payment-row consistency rules
-Only implement these if supported by the project requirements or clearly required by the existing business model. Otherwise report them as recommendations.
-
-9. TESTING
-- Inspect existing tests.
-- Add meaningful tests for:
-  - valid payroll submission
-  - empty payment rows
-  - null/zero/negative amount
-  - payment-row total mismatch
-  - insufficient source-account balance
-  - invalid beneficiary account
-  - invalid bank code
-  - invalid lifecycle/status
-  - draft creation/update
-  - relevant controller error responses
-- Run the tests after implementation.
-
-10. DATABASE CONFIGURATION
-- Inspect application.properties and profiles.
-- Determine whether ddl-auto=create is only appropriate for development.
-- Do not change it blindly.
-- If profile separation is appropriate, implement it without breaking the current development setup.
-
-11. EMPTY/STUB MODULES
-- Identify empty controllers/services/repositories/configuration classes.
-- Do NOT implement unrelated corporate-banking modules just because they are empty.
-- Determine whether they are actually required by the current project scope.
-- Report them separately if they are outside the currently implemented payroll/payment feature.
+1. Create payroll/payment batch
+2. Save draft
+3. Load/edit draft
+4. Submit payroll
+5. Frontend payload → backend DTO mapping
+6. Payment row validation
+7. Calculate the total from ALL payment rows
+8. Compare calculated row total with batch totalAmount
+9. Resolve the source account
+10. Retrieve source account availableBalance
+11. Compare the calculated payroll total against availableBalance
+12. Reject submission when availableBalance is insufficient
+13. Validate currency/account consistency
+14. Validate duplicate employee/beneficiary rows if required by the current project requirements
+15. Validate batch status/lifecycle rules
+16. Verify error responses returned to the frontend are appropriate and not incorrectly converted to HTTP 500
+17. Verify frontend correctly displays validation and insufficient-balance errors
+18. Verify DTOs, entities, repositories, services, controllers and frontend services are consistent.
 
 IMPORTANT:
-- First inspect the project and create a prioritized implementation plan.
-- Do not immediately make broad changes.
-- Prioritize CRITICAL and HIGH issues first.
-- After each logical group of changes, compile/test the backend and verify the frontend build.
-- Do not modify DTOs/entities/API contracts unless necessary.
-- Do not introduce duplicate mapping layers unnecessarily.
-- Preserve existing working functionality.
-- At the end, provide:
-  1. Files changed
-  2. Problems fixed
-  3. Problems intentionally not changed and why
-  4. Tests/compilation performed
-  5. Any remaining risks
-  6. A final checklist showing whether backend, frontend, DTOs, validation, error handling, security, database, and tests are consistent.
+- Do not change code yet.
+- Do not refactor unrelated modules.
+- Do not add new architecture.
+- Do not assume something is correct just because it compiles.
+- Trace the actual execution flow and identify any logical, business-rule, integration, security, or data-consistency gaps.
+
+Give me a structured code-review report with:
+CRITICAL
+HIGH
+MEDIUM
+LOW
+
+For every issue include:
+- exact file and method
+- what is wrong
+- why it matters
+- concrete recommended fix
+
+At the end provide:
+1. Already correct
+2. Still missing
+3. Potential hidden bugs
+4. Manual test cases I should run
+5. Whether the payroll flow is currently safe to proceed with frontend testing
+
+Do not modify any files until I explicitly approve the fixes.
