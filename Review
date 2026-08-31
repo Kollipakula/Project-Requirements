@@ -90,3 +90,54 @@ Most importantly:
 DO NOT MODIFY ANY FILES.
 DO NOT "fix" anything yet.
 I only want the verified diagnosis and testing results first.
+
+
+
+++++++++++++
+Before Sahil's task is implemented, I want to establish a baseline for the current code.
+
+DO NOT modify, create, delete, or fix any files.
+
+Please run the existing backend unit tests/JUnit tests for this project.
+
+1. Identify the testing framework being used (JUnit 4/5, Mockito, Spring Boot Test, etc.).
+2. Run all existing backend tests.
+3. Report:
+   - Total tests
+   - Passed
+   - Failed
+   - Errors
+   - Skipped
+4. For every failed test, give:
+   - Test class
+   - Test method
+   - Exact failure/error
+   - Whether it is related to the payroll/payment functionality
+5. Specifically identify whether there are existing tests for:
+   - PaymentBatchController
+   - PaymentBatchService
+   - saveDraft
+   - submit
+   - user/X-User-Id resolution
+   - database/repository behavior
+6. Do NOT create new tests.
+7. Do NOT modify existing tests.
+8. Do NOT modify production code.
+9. Do NOT change database/configuration files.
+10. Do not interpret a failed test as something to fix yet. Just report the results.
+
+At the end, give me a clear baseline:
+
+BASELINE TEST RESULT
+- Tests run:
+- Passed:
+- Failed:
+- Errors:
+- Skipped:
+
+PAYROLL-RELATED TEST RESULT
+- Passing:
+- Failing:
+- No tests found:
+
+Then explain whether the current code has a clean unit-test baseline before Sahil's changes.
