@@ -1,180 +1,92 @@
-  Based on the latest read-only review, fix ONLY the four CRITICAL issues listed below.
+  Before making ANY code changes, I want you to perform a complete diagnostic review of the payroll payment flow.
 
-Do NOT modify unrelated functionality.
-Do NOT undo any changes from the previous stabilization pass.
-Do NOT implement the HIGH or MEDIUM items yet.
-Do NOT commit anything.
+Do NOT modify, create, delete, or auto-fix any files yet.
 
-1. COMPLETE THE BACKEND DRAFT LIFECYCLE
+The current intended API contract is:
 
-Files:
-- frontend CreatePayroll.js
-- frontend paymentService.js
-- backend PaymentBatchController.java
-- backend PaymentBatchService.java
+POST /payments/payroll/draft
+POST /payments/payroll/submit
+POST /payments/payroll/{batchId}/submit
+POST /payments/payroll/{batchId}
 
-Implement this exact lifecycle:
+Please inspect the actual frontend and backend code and verify whether the following files really need changes:
 
-A. First Save Draft:
-- Call POST /payments/payroll/draft.
-- Receive the backend-created batchId.
-- Store that backend batchId in the local draft object/localStorage.
+1. frontend/public/index.html
+2. frontend/src/services/paymentService.js
+3. frontend/src/services/api.js
+4. frontend/package.json
+5. backend PaymentBatchController.java
+6. backend PaymentBatchService.java
+7. application.properties
+8. application-dev.properties
+9. data-dev.sql
 
-B. Subsequent Save Draft:
-- If the draft already has a backend batchId, call:
-  PUT /payments/payroll/draft/{batchId}
-- Do NOT create another draft with POST.
+For each file, tell me:
 
-C. Load Draft:
-- If a stored draft has a backend batchId, load the corresponding backend draft when appropriate.
-- Backend should be the source of truth for an existing saved draft.
-- LocalStorage can remain as a convenience/cache.
+- Whether it actually needs to be changed
+- The exact reason
+- The current relevant code/mapping
+- What the correct expected behavior should be
+- Whether the problem is frontend, backend, database, proxy/CORS, or configuration
+- Do not suggest unnecessary changes
 
-D. Submit Draft:
-- If the loaded draft has a backend batchId, call:
-  POST /payments/payroll/{batchId}/submit
-- Do NOT call the new-batch submit endpoint for an existing draft.
+Also verify the following specifically:
 
-E. New Payroll:
-- If there is no existing batchId, preserve the current create-and-submit flow:
-  POST /payments/payroll/submit
+1. Confirm the exact Spring controller mappings for:
+   POST /payments/payroll/draft
+   POST /payments/payroll/submit
 
-Make sure the response from the backend is actually inspected so the frontend obtains the real batchId.
+2. Confirm whether the frontend is calling exactly those same paths.
+   There must NOT be an accidental /payment/payroll or /payroll path.
 
-Do not invent new endpoints. Use the existing controller mappings.
+3. Inspect api.js and paymentService.js and determine whether Axios is using:
+   - relative URLs through the CRA proxy, OR
+   - an explicit http://localhost:8080 base URL.
+   Identify which approach the project is currently designed to use.
 
-2. PROVIDE DETERMINISTIC DEV DATA
+4. Inspect package.json and index.html and determine whether the frontend is CRA or Vite.
+   Check whether index.html is using the correct bootstrap mechanism for the actual project.
 
-Files to inspect:
-- application.properties
-- schema.sql
-- data.sql if present
-- UserRepository
-- AccountRepository
-- Currency entities/repositories
+5. Check the X-User-Id flow.
+   The frontend currently appears to send X-User-Id: 1.
+   Verify how that value is obtained from authService/session and how the backend resolves it.
 
-The review says a fresh H2 database can have no users/accounts/currencies while the service requires them.
+6. Check the database/user data.
+   Verify whether user ID 1 actually exists in the database used by the running Spring application.
+   Do not assume that data-dev.sql is automatically being loaded.
 
-Implement the smallest safe development initialization solution so a fresh local development run has the required user, source account, and currency records.
+7. Explain why Swagger receives:
+   400 User not found: 1
 
-Do NOT hard-code seed data inside PaymentBatchService.
-Do NOT affect production configuration unnecessarily.
-Prefer a Spring Boot development profile or proper data initialization.
+   but the browser request appears to receive:
+   404 or 500.
 
-3. FIX FRONTEND/BACKEND API BASE URL
+8. Determine whether CORS is actually the problem or whether the frontend is supposed to use the configured proxy instead.
 
-Inspect:
-- frontend api.js
-- apiClient configuration
-- package.json
-- proxy configuration
-- PaymentBatchController.java
+9. Test the backend endpoints if possible without modifying the code.
+   Test both:
+   POST /payments/payroll/draft
+   POST /payments/payroll/submit
 
-Ensure the frontend payroll requests actually reach the existing backend mappings.
+   Use a valid request body and X-User-Id value only if such a valid user exists.
 
-Use the existing backend paths rather than inventing new ones.
+10. Check whether the 404 is actually coming from Spring or from the frontend development server/proxy.
 
-The important existing payroll paths include:
-- POST /payments/payroll/draft
-- PUT /payments/payroll/draft/{batchId}
-- POST /payments/payroll/submit
-- POST /payments/payroll/{batchId}/submit
+At the end, give me a diagnostic report in this exact structure:
 
-If the project uses a CRA proxy, configure it consistently.
-If it uses REACT_APP_API_BASE_URL, configure/use it consistently.
+A. BACKEND MAPPING STATUS
+B. FRONTEND ENDPOINT STATUS
+C. FRONTEND BOOTSTRAP STATUS
+D. PROXY/CORS STATUS
+E. X-USER-ID STATUS
+F. DATABASE/USER STATUS
+G. DRAFT API TEST
+H. SUBMIT API TEST
+I. FILES THAT ACTUALLY NEED CHANGES
+J. FILES THAT DO NOT NEED CHANGES
+K. EXACT ROOT CAUSE(S)
 
-Do not support multiple conflicting API contracts.
-
-4. VERIFY EVERYTHING AFTER THE CHANGES
-
-Run:
-- Maven compile
-- Maven tests if possible
-- frontend diagnostics/build if possible
-
-Also inspect the final code to ensure:
-- first draft save creates one backend batch
-- second draft save updates the same batch
-- loading an existing draft preserves batchId
-- submitting an existing draft uses /{batchId}/submit
-- new payroll still uses /submit
-
-At the end report:
-1. Files changed
-2. Exactly which critical issues were fixed
-3. Test/build results
-4. Any remaining issues
-
-Do not proceed to HIGH/MEDIUM fixes yet.
-
-
-----------------------
-Please thoroughly test and review the Payroll Draft/Submit API integration in this project.
-
-DO NOT make any code changes yet. First analyze and report the problems.
-
-I need you to verify the complete flow between React frontend and Spring Boot backend.
-
-Backend:
-- Controller base path should be /payments/payroll
-- Draft endpoint should be POST /payments/payroll/draft
-- Submit endpoint should be POST /payments/payroll/submit
-- Verify the actual controller mappings and confirm these endpoints really exist.
-- Check the service and repository layers used by these endpoints.
-- Verify how X-User-Id is handled and whether the user ID must exist in the database.
-
-Frontend:
-- Inspect api.js and all payroll/payment service files.
-- Find every place where /payments/payroll, /draft, and /submit are constructed.
-- Check whether the frontend is accidentally using /payment/payroll instead of /payments/payroll.
-- Check whether any endpoint is incorrectly written as /payroll/draft, /payroll/submit, etc.
-- Check the Axios baseURL.
-- Check the React package.json proxy setting.
-- Determine whether the current proxy configuration conflicts with the Axios baseURL.
-- Check how X-User-Id is obtained from authService/session and what value is actually being sent.
-- Check whether the frontend request URL exactly matches the backend endpoint.
-
-Testing:
-1. Test POST /payments/payroll/draft using the backend directly.
-2. Test POST /payments/payroll/submit using the backend directly.
-3. Use a valid X-User-Id that actually exists in the database.
-4. Use a minimal valid request body based on the DTO.
-5. Compare the result with the request made from the React frontend.
-6. Check whether the frontend request is reaching port 8080.
-7. Check whether the request is getting 404, 400, 500, CORS error, or another response.
-8. Check the browser Network request URL, method, request headers, request body, and response.
-9. Check whether the Spring Boot logs show the incoming frontend request.
-
-Also investigate these errors I am currently seeing:
-
-- "Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of text/html"
-- 404 for payments/payroll/draft
-- Previously I also received CORS errors when calling http://localhost:8080 from http://localhost:3000
-- Swagger currently reaches http://localhost:8080/payments/payroll/draft but returns:
-  400 Bad Request
-  "User not found: 1"
-
-Important:
-- Do NOT assume that the proxy is the cause.
-- Do NOT change /payments/payroll to /payment/payroll.
-- Do NOT modify the backend endpoint just to make the frontend work.
-- Do NOT change code unless you first identify the exact root cause.
-- Distinguish frontend configuration problems, backend endpoint problems, CORS problems, and database/user-data problems.
-
-At the end, give me a clear report in this format:
-
-1. BACKEND STATUS: PASS/FAIL
-2. FRONTEND STATUS: PASS/FAIL
-3. API URL STATUS: PASS/FAIL
-4. PROXY CONFIGURATION: CORRECT/INCORRECT
-5. CORS CONFIGURATION: CORRECT/INCORRECT
-6. X-USER-ID: CORRECT/INCORRECT
-7. DATABASE USER: PASS/FAIL
-8. DRAFT API TEST: PASS/FAIL
-9. SUBMIT API TEST: PASS/FAIL
-10. MIME/React error: ROOT CAUSE
-11. 404 error: ROOT CAUSE
-12. Exact files/lines that need changes
-13. Exact recommended changes, but DO NOT apply them yet.
-
-Please be very careful and base the conclusions on the actual code and test results, not assumptions.
+Most importantly:
+DO NOT MODIFY ANY FILES.
+DO NOT "fix" anything yet.
+I only want the verified diagnosis and testing results first.
