@@ -41,3 +41,65 @@ Do not change anything. I only want the verification report.
 -------------------
 
 Remove the ▲ and ▼ spinner controls from the Amount input field in Create Payroll. Keep the field as a number input so existing amount validation and calculations continue to work. Users should be able to type the amount manually. Apply the change only to the Amount field and do not modify any other fields or business logic
+---------------------------------
+Update the Payment Summary UI in Create Payroll to display the total amount in words in a clean, professional corporate-banking style.
+1. Placement
+In the existing Payment Summary section, locate the Total Account Currency amount (for example, SGD 400.00).
+Keep the existing numeric amount exactly where it is.
+Add a small “Amount in Words” line directly underneath the numeric amount, within the same Total Account Currency card.
+Do NOT create a separate large card just for the words.
+2. Dynamic conversion
+Convert the calculated Total Account Currency amount into words dynamically.
+The words must update automatically whenever the employee transaction amounts change or the payment currency changes.
+Examples:
+SGD 400.00 → “Four Hundred Singapore Dollars Only”
+INR 10,000.00 → “Ten Thousand Indian Rupees Only”
+Use the selected payment currency when generating the currency name.
+Keep the existing amount calculation and exchange-rate calculation unchanged.
+3. UI design
+Make the numeric amount remain the primary/highlighted value.
+Display the amount-in-words text underneath in a smaller, subtle font.
+Use a slightly muted/secondary text appearance so it supports the amount rather than competing with it.
+Add a small label such as “Amount in Words” above or beside the words.
+Keep the design consistent with the existing Corporate Banking theme, spacing, borders, typography, and responsive layout.
+Make sure the text wraps naturally on smaller screens and does not overflow.
+Do not change the existing Payment Summary layout unnecessarily.
+4. CSS
+Add dedicated CSS classes for the amount-in-words section instead of applying global styles.
+Example structure:
+<div class="amount-in-words">
+    <div class="amount-in-words-label">Amount in Words</div>
+    <div class="amount-in-words-value">
+        Four Hundred Singapore Dollars Only
+    </div>
+</div>
+Use CSS similar to:
+.amount-in-words {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.amount-in-words-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+    opacity: 0.7;
+}
+
+.amount-in-words-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-word;
+}
+Adjust these styles to match the application's existing CSS/theme rather than blindly overriding existing styles.
+5. Important
+Do not modify the existing Total Account Currency calculation.
+Do not modify the Total Base Currency or FX-rate calculation.
+Do not change the backend API/request payload.
+Do not affect employee transaction calculations.
+This should be an additional presentation feature only.
+Reuse existing utility functions/components if the project already has a number-to-words implementation.
+Before creating a new utility, check whether a number-to-words function already exists.
+Keep the implementation reusable for INR, SGD, USD and other supported currencies.
