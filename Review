@@ -38,3 +38,6 @@ Please verify:
 8. Confirm that the 9/9 result represents genuinely executed tests, not merely tests being skipped or excluded.
 
 Do not change anything. I only want the verification report.
+-------------------
+
+Remove the ▲ and ▼ spinner controls from the Amount input field in Create Payroll. Keep the field as a number input so existing amount validation and calculations continue to work. Users should be able to type the amount manually. Apply the change only to the Amount field and do not modify any other fields or business logic
