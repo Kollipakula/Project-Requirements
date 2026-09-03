@@ -197,3 +197,148 @@ For every step, mention the actual file/class/method involved.
 
 Please explain in simple language, assuming I am still learning Spring Boot, Java, React and JavaScript.
 Do not just give me a summary. I want to understand how the pieces are connected.
+---------------------------------------
+I have already integrated another branch into my current branch, and there is now a merge conflict in the API.js file.
+
+Before this integration, the following four functionalities were already working correctly on my current branch:
+
+1. Login
+2. Account Balance
+3. Quick Payment
+4. Create Payroll
+
+I am now integrating another teammate's branch, which contains:
+
+5. Transactions
+6. Transaction Approval
+
+I need you to resolve the API.js merge conflict carefully without breaking any of the four existing working functionalities.
+
+IMPORTANT:
+Do NOT simply choose "Current/Mine" or "Incoming/Theirs" for the entire API.js file.
+
+First analyze both versions of API.js and trace how the APIs are actually being used throughout the project.
+
+Please do the following:
+
+1. Inspect the complete API.js from both sides of the conflict.
+
+2. Identify what API configurations/endpoints belong to my existing functionality:
+   - Login
+   - Account Balance
+   - Quick Payment
+   - Create Payroll
+
+3. Identify what new API configurations/endpoints are coming from the teammate's branch:
+   - Transactions
+   - Transaction Approval
+
+4. Compare both versions for:
+   - Base URL
+   - API prefixes such as "/api"
+   - Endpoint paths
+   - HTTP methods
+   - Request payload/body
+   - Query parameters
+   - Path parameters
+   - Headers/authentication
+   - Response handling
+   - Axios/fetch configuration
+   - Any common API helper functions
+
+5. Trace every API definition to the service/component that calls it. Do not assume an endpoint is correct just because it exists in API.js.
+
+6. Pay special attention to whether one branch uses:
+      "/endpoint"
+   while another uses:
+      "/api/endpoint"
+
+   Determine the correct configuration from the actual backend controllers/routes and the way the API client/base URL is configured.
+
+7. Check carefully for problems such as:
+   - "/api/api/..."
+   - Missing "/api"
+   - Missing or duplicated "/"
+   - Incorrect HTTP method
+   - Incorrect endpoint path
+   - Duplicate API definitions
+   - Overwriting an existing working API definition
+   - Changing the base URL unnecessarily
+
+8. Preserve all API integrations that are already working for:
+   - Login
+   - Account Balance
+   - Quick Payment
+   - Create Payroll
+
+9. Add/retain the necessary API integrations required for:
+   - Transactions
+   - Transaction Approval
+
+10. If both branches define similar API/helper functions, determine whether they are actually duplicates or whether they serve different functionality. Merge them appropriately instead of blindly keeping one version.
+
+11. Check the backend controllers/routes if they are available in the project and use them to verify the correct endpoint paths and HTTP methods.
+
+12. Also inspect the corresponding frontend service files/components for Transactions and Approval to make sure their API calls point to the correct functions/endpoints in API.js.
+
+BEFORE MAKING ANY CHANGES:
+
+Give me a concise comparison in this format:
+
+Existing/Incoming API
+→ Current branch
+→ Incoming branch
+→ Difference
+→ Correct implementation
+→ Reason
+
+For example:
+
+Login API
+→ Current: ...
+→ Incoming: ...
+→ Difference: ...
+→ Correct: Keep current
+→ Reason: Already working and matches backend
+
+Transactions API
+→ Current: Not present
+→ Incoming: ...
+→ Difference: New functionality
+→ Correct: Add incoming API
+→ Reason: Required by Transactions feature
+
+After showing the comparison, resolve the API.js conflict by creating a combined implementation that:
+
+- Keeps the four existing working integrations intact.
+- Correctly adds Transactions APIs.
+- Correctly adds Transaction Approval APIs.
+- Uses one consistent base URL/API configuration.
+- Does not introduce duplicated "/api" prefixes.
+- Does not introduce unrelated changes.
+
+Then inspect the affected service/component files and verify that all six functionalities are mapped correctly:
+
+1. Login
+2. Account Balance
+3. Quick Payment
+4. Create Payroll
+5. Transactions
+6. Transaction Approval
+
+Do not modify unrelated functionality or refactor the project unnecessarily.
+
+After resolving the conflict, provide a final summary containing:
+
+- What was conflicting
+- What was kept from my branch
+- What was taken/merged from the incoming branch
+- Any endpoint changes made
+- Confirmation that the four existing APIs were preserved
+- Confirmation that Transactions and Approval APIs were added correctly
+- Any remaining issues that require manual verification
+
+IMPORTANT:
+Do not make assumptions.
+Do not blindly accept "Current" or "Incoming".
+Trace the actual API configuration and backend routes before deciding which code is correct.
