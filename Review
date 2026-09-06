@@ -342,3 +342,60 @@ IMPORTANT:
 Do not make assumptions.
 Do not blindly accept "Current" or "Incoming".
 Trace the actual API configuration and backend routes before deciding which code is correct.
+--------------------------
+I want to implement role-based access specifically for the VIEWER role.
+
+Requirement:
+A user with the VIEWER role should ONLY be able to access/view the Account Balance page.
+
+The VIEWER must NOT be able to:
+- Create Payroll
+- Make Quick Payment
+- Approve or Reject Transactions
+- Perform any other action that changes or submits data
+
+The VIEWER should still be able to:
+- Login successfully
+- View the Account Balance page
+- Use any read-only functionality that is already required for the Account Balance page
+
+IMPORTANT:
+- Keep all existing functionality unchanged for other roles/users.
+- Do NOT change the existing business logic for Maker, Approver, Admin, or other roles.
+- Do NOT remove or disable any existing functionality for non-VIEWER users.
+- Do NOT modify API endpoints unless it is necessary for enforcing the VIEWER restriction.
+- Prefer enforcing the restriction at the appropriate frontend routing/UI level AND backend/API authorization level if the existing project architecture supports it.
+- Do not rely only on hiding buttons. A VIEWER should not be able to call restricted APIs directly.
+- Preserve the existing Login, Create Payroll, Quick Payment, Account Balance, Transaction, and Approval functionality for users who are authorized to use them.
+- Follow the existing project architecture and coding style.
+- Do not make unrelated changes.
+
+Before making changes:
+1. Inspect how the current application identifies the user's role.
+2. Identify where role information is stored after login.
+3. Identify the routing/protected-route logic.
+4. Identify the API/service methods for:
+   - Create Payroll
+   - Quick Payment
+   - Transaction Approval/Reject
+   - Account Balance
+5. Identify the existing backend authorization/security logic, if any.
+
+Then implement the minimum changes required to enforce the VIEWER restrictions.
+
+After making the changes, verify:
+- VIEWER can login.
+- VIEWER can access Account Balance.
+- VIEWER cannot access Create Payroll.
+- VIEWER cannot perform Quick Payment.
+- VIEWER cannot approve/reject transactions.
+- Existing authorized roles can still use their existing functionality.
+- No existing functionality unrelated to VIEWER access has been changed.
+
+IMPORTANT:
+At the end, give me an exact list of every file you modified, including:
+- File path
+- What you changed in that file
+- Why that change was necessary
+
+Do not modify files that are not required for this role restriction.
