@@ -399,3 +399,23 @@ At the end, give me an exact list of every file you modified, including:
 - Why that change was necessary
 
 Do not modify files that are not required for this role restriction.
+----------------------------------------------
+I want to make a small UI-only improvement to the Payment Summary section on the Create Payroll page.
+
+Currently, the "Amount in Words" section appears as a large bordered box inside another bordered box, which makes the UI look cluttered.
+
+Please change ONLY the UI/styling for the "Amount in Words" section.
+
+Requirements:
+1. Remove the inner bordered box around the amount-in-words text.
+2. Keep "Amount in Words" as a small label above the actual text.
+3. Display the amount-in-words value as clean, normal text below the label.
+4. Keep appropriate spacing and padding so the section looks clean and professional.
+5. Maintain the existing Payment Summary layout and the existing Total Account Currency and Total Base Currency sections.
+6. Make the design consistent with the existing Corporate Banking theme.
+7. Keep it professional and minimal — do not add unnecessary icons, animations, or decorative elements.
+8. Do NOT change any payment calculation, currency conversion, amount-in-words generation, API calls, state management, validation, or backend code.
+9. Do NOT change any existing functionality.
+10. Only modify the relevant React JSX/CSS/styling files required for this UI improvement.
+
+Before making changes, identify which files contain the Payment Summary and its styling. After making the change, tell me exactly which files you modified and briefly explain what you changed in each file.
