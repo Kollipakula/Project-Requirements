@@ -60,3 +60,37 @@ Group them separately under:
 - PaymentBatchControllerTest
 
 Do not modify any files or code. I only want a clear list/explanation of the existing test cases that were executed.
+++++++++++++++++++++++++++++++++++
+I want to understand how the React frontend is connected to my Spring Boot backend in my existing Corporate Banking project.
+
+Do NOT modify any files or code.
+
+Please inspect the existing frontend and backend code and trace the complete API flow for the Create Payroll feature.
+
+Specifically explain:
+
+1. Which React component/page contains the Create Payroll functionality.
+2. Where the Save Draft and Submit actions are handled.
+3. How the frontend prepares the request data.
+4. How api.js is involved.
+5. Whether Axios is being used, and where it is configured/used.
+6. What exact API endpoint the frontend calls for:
+   - Save Draft
+   - Create and Submit
+   - Update Draft, if applicable
+   - Submit an existing draft, if applicable
+7. How the HTTP method (GET/POST/PUT etc.) is specified.
+8. How the request body is sent from React to Spring Boot.
+9. How headers such as X-User-Id are added, if applicable.
+10. Which Spring Boot Controller receives each request.
+11. Which Request DTO receives the JSON.
+12. How the Controller calls the Service.
+13. How the response comes back from Spring Boot to React.
+14. How React handles the response/error.
+
+Please show the actual relevant files, function names, API endpoints, and important code snippets from my project.
+
+Most importantly, explain the flow in simple terms using my Create Payroll feature, like:
+React button → function → api.js → Axios → API endpoint → Controller → Service → Repository → Database → response → React.
+
+Do not make any changes. I only want an explanation of the existing implementation.
