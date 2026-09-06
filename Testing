@@ -1,0 +1,45 @@
+I want to start unit testing the backend functionality that I implemented for my part of the Corporate Banking project.
+
+My main functionality is the Create Payroll / Payment Batch feature, including:
+- PaymentBatchService
+- BatchPayment handling
+- Saving payroll drafts
+- Creating and submitting payroll batches
+- Updating drafts
+- Submitting drafts for approval
+- Payment-row validation
+- Total amount validation
+- Source-account available-balance validation
+- Currency conversion validation
+- Duplicate batch-reference validation
+- Repository interactions
+- DTO/entity mapping
+- Exception handling related to this functionality
+
+Please first inspect the existing backend code and existing test files carefully.
+
+IMPORTANT:
+1. Do NOT modify production code.
+2. Do NOT create duplicate tests for tests that already exist.
+3. Identify what unit tests are already present and what important scenarios are still missing.
+4. Focus ONLY on the functionality listed above.
+5. Use the existing project testing framework and conventions.
+6. Mock repository/service dependencies appropriately for unit tests.
+7. Cover both successful and failure scenarios.
+8. Include validation and exception scenarios, especially IllegalArgumentException and IllegalStateException.
+9. Test important business rules such as:
+   - payment row total must match batch total
+   - insufficient available balance should be rejected
+   - currency conversion when payment currency differs from account currency
+   - duplicate batch reference should be handled correctly
+   - invalid/missing required data should be rejected
+   - draft can be updated only when its status is DRAFT
+   - valid draft creation/submission should succeed
+10. Do not write tests for unrelated modules or other team members' functionality.
+
+First give me:
+A. The existing tests you found.
+B. The important test scenarios that are missing.
+C. The exact test files you propose to create or modify.
+
+Do NOT make any changes yet. Wait for my confirmation before creating or modifying test files.
