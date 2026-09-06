@@ -43,3 +43,20 @@ B. The important test scenarios that are missing.
 C. The exact test files you propose to create or modify.
 
 Do NOT make any changes yet. Wait for my confirmation before creating or modifying test files.
+
+
+---------------------------
+Show me all the test cases that were used in the 40/40 test run.
+
+For each test case, provide:
+1. Test class name
+2. Test method name
+3. What scenario/business rule it tests
+4. Expected result
+5. Whether it passed or failed
+
+Group them separately under:
+- PaymentBatchServiceTest
+- PaymentBatchControllerTest
+
+Do not modify any files or code. I only want a clear list/explanation of the existing test cases that were executed.
