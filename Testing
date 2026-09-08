@@ -146,3 +146,34 @@ H. A step-by-step implementation plan
 Do NOT implement anything until I explicitly say "IMPLEMENT".
 
 The main goal is to add tamper detection to payroll submission while keeping the existing project functionality unchanged.
+
+--------------------------
+Your analysis looks good.
+
+Before implementation, I want you to refine the design specifically for my existing project.
+
+Important:
+- Everything in the project is currently working.
+- I want the smallest possible change.
+- Do not modify the database schema initially.
+- Do not modify the existing business validations.
+- Do not change existing API behavior unnecessarily.
+- Do not put any HMAC secret/private key in React.
+- Do not implement yet.
+
+Please answer these questions specifically:
+
+1. Exactly how will the backend generate the HMAC/integrity token?
+2. At what point in my existing payroll flow will it be generated?
+3. How will React receive and store the token?
+4. Exactly how will React send it during "Submit for Processing"?
+5. Exactly how will the backend verify it?
+6. How will the design prevent an attacker from changing the amount, account, currency, employee payment rows, etc. and still producing a valid token?
+7. How will replay of an old valid request be prevented?
+8. Why is this approach safe even though the React frontend is not trusted?
+9. Which exact existing methods/files will change?
+10. Show me the proposed flow using my existing method names such as `submitPayroll()` and `submitPayrollDraft()`.
+
+Most importantly, do not generate or modify code yet.
+
+I want the design explained first so I can review it.
