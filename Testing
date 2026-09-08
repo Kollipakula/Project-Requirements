@@ -94,3 +94,55 @@ Most importantly, explain the flow in simple terms using my Create Payroll featu
 React button → function → api.js → Axios → API endpoint → Controller → Service → Repository → Database → response → React.
 
 Do not make any changes. I only want an explanation of the existing implementation.
+--------------------------------------------
+I have an already working Corporate Banking project with a React frontend and Spring Boot backend. I want to add ONE security enhancement to the existing Payroll "Submit for Processing" flow.
+
+Before making any changes, please inspect the existing project code and understand the complete payroll submission flow.
+
+Please inspect:
+- React CreatePayroll component
+- paymentService.js
+- Payroll/Payment Controller
+- Payroll request DTO(s)
+- PaymentBatchService / relevant service classes
+- PaymentBatch and BatchPayment entities
+- Any existing exception handling
+- Existing authentication/user-header handling
+- Existing tests related to payroll submission
+
+IMPORTANT:
+1. Do NOT modify any code yet.
+2. Do NOT rewrite existing functionality.
+3. Do NOT change existing API endpoints, request structure, database schema, business validations, or frontend behavior unless absolutely necessary.
+4. Do NOT remove or simplify any existing validation.
+5. First explain the current flow from:
+   React → paymentService → Controller → Request DTO → Service → Database.
+6. Identify the safest place to add an integrity/tamper-detection mechanism.
+7. I am considering a cryptographic integrity mechanism such as HMAC-SHA-256 or a digital signature rather than a simple CRC/checksum.
+8. Do NOT put a secret HMAC key in React/frontend code.
+9. HTTPS/TLS should remain the transport-security mechanism; this new mechanism is an additional integrity/security layer.
+10. The backend must continue to independently validate all important business data such as:
+    - logged-in user
+    - source account
+    - payment amounts
+    - total amount
+    - available balance
+    - currency conversion
+    - batch status
+    - authorization/approval rules
+11. Do not assume that a normal checksum such as CRC32 is secure against an attacker who can modify the request.
+
+After inspecting the code, give me:
+
+A. Current payroll submission flow
+B. Recommended security approach for THIS project
+C. Exact files/classes that would need changes
+D. What new fields/classes/methods would be required
+E. How the frontend and backend would interact
+F. How tampering would be detected
+G. Whether the approach can be implemented with minimal risk to the existing working functionality
+H. A step-by-step implementation plan
+
+Do NOT implement anything until I explicitly say "IMPLEMENT".
+
+The main goal is to add tamper detection to payroll submission while keeping the existing project functionality unchanged.
