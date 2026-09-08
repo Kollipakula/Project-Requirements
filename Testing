@@ -177,3 +177,28 @@ Please answer these questions specifically:
 Most importantly, do not generate or modify code yet.
 
 I want the design explained first so I can review it.
+------------------------------
+Your design is approved for review, but before implementation make one final adjustment:
+
+Implement ONLY the saved-draft -> submit-for-processing integrity flow first.
+
+Do NOT modify the direct submitPayroll() flow yet.
+
+Do NOT change the database schema.
+
+Do NOT change existing business validations or approval logic.
+
+Do NOT put any secret/private key in React.
+
+Keep the existing API behavior as unchanged as possible.
+
+Before implementing, list the exact methods you will modify in:
+- CreatePayroll.js
+- paymentService.js
+- PaymentBatchController.java
+- PaymentBatchService.java
+- GlobalExceptionHandler.java
+
+Also list the new HMAC/integrity service class and the tests that will be added/modified.
+
+Then wait for my explicit "IMPLEMENT".
