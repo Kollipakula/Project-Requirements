@@ -202,3 +202,22 @@ Before implementing, list the exact methods you will modify in:
 Also list the new HMAC/integrity service class and the tests that will be added/modified.
 
 Then wait for my explicit "IMPLEMENT".
+
+-------------------------
+The plan is approved with these two clarifications:
+
+1. For handleLoadDraft(), do not rely indefinitely on an old token stored in localStorage. When the backend loads the authoritative draft snapshot, issue/return a fresh integrity token for that snapshot so an expired token does not prevent a user from submitting a valid draft.
+
+2. Keep the one-time nonce/replay protection for the first version, but ensure that a successful first submission consumes the token and a repeated submission using the same token is rejected. Existing batch status validation must remain unchanged.
+
+Everything else in the plan remains the same.
+
+Do NOT modify submitPayroll(payload) yet.
+Do NOT modify the database schema.
+Do NOT change existing business validation or approval logic.
+Do NOT put any secret/private key in React.
+Keep the changes as small and isolated as possible.
+
+If the implementation requires any deviation from this plan, explain it before making that change.
+
+IMPLEMENT.
