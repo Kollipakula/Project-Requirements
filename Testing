@@ -221,3 +221,19 @@ Keep the changes as small and isolated as possible.
 If the implementation requires any deviation from this plan, explain it before making that change.
 
 IMPLEMENT.
+---------
+Yes, run the end-to-end manual checklist scenario.
+
+Do not modify any code.
+
+Test this exact flow:
+
+1. Save a payroll as a draft.
+2. Load the saved draft and confirm that a fresh integrity token is received.
+3. Submit the draft using "Submit for Processing".
+4. Confirm that the submission succeeds and the batch moves to the expected PENDING/PENDING_APPROVAL status.
+5. Attempt to reuse the same integrity token/submit headers again.
+6. Confirm that the second attempt is rejected because the token has already been consumed.
+7. Report the exact result of each step and any errors encountered.
+
+Do not make fixes automatically. If anything fails, explain the failure first and wait for my instruction.
