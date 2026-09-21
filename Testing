@@ -210,6 +210,8 @@ The plan is approved with these two clarifications:
 
 2. Keep the one-time nonce/replay protection for the first version, but ensure that a successful first submission consumes the token and a repeated submission using the same token is rejected. Existing batch status validation must remain unchanged.
 
+
+
 Everything else in the plan remains the same.
 
 Do NOT modify submitPayroll(payload) yet.
@@ -237,3 +239,12 @@ Test this exact flow:
 7. Report the exact result of each step and any errors encountered.
 
 Do not make fixes automatically. If anything fails, explain the failure first and wait for my instruction.
+
+
+
+-------+++++-----------------+-+++++------
+Good morning Sandip,
+I have my convocation on the 26th. If you could please give me permission, I would like to leave on the night of the 24th and work from my hometown on Friday.
+Since it has been more than two months since I last visited my hometown, and I couldn’t visit even during Ganesh Chaturthi, I was hoping to spend a little time with my family this time. I would like to request permission to work from home for the remaining two days of the upcoming week as well.
+I’m also attaching my convocation mail as proof for your reference. I would really appreciate it if you could consider my request.
+Thank you.
