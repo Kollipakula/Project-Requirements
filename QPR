@@ -1,0 +1,377 @@
+I have access to Azure DevOps through the configured integration. Please use the available Azure DevOps tools/APIs to inspect the test plans and test suites before making any changes.
+
+# OBJECTIVE
+
+The **new/completed PDBQPR SIT Test Plan** is the correct and completed reference implementation.
+
+I now need to restructure/build the **AWMQPR SIT Test Plan** by following the same structural approach and hierarchy used in the completed PDBQPR.
+
+The primary objective is to correct the **Test Plan and Test Suite project structure/hierarchy**.
+
+The existing AWM test cases already exist and should remain unchanged. I do NOT want new or duplicate test cases to be created.
+
+---
+
+# PLANS
+
+## 1. REFERENCE PLAN — Completed PDBQPR
+
+This plan is already completed and is the correct reference for the required structure.
+
+- Plan Name: `[PDBQPR SIT TEST PLAN NAME]`
+- Plan ID: `[PDBQPR_NEW_PLAN_ID]`
+- URL: `[PDBQPR_NEW_PLAN_URL]`
+
+Use this plan as the **source of truth** for understanding the required Test Plan/Test Suite hierarchy, naming convention, and structural approach.
+
+Do not modify this reference plan.
+
+---
+
+## 2. SOURCE PLAN — Old AWMQPR
+
+This contains the existing AWM test suites and existing test cases.
+
+- Plan Name: `[OLD_AWMQPR_PLAN_NAME]`
+- Plan ID: `[OLD_AWMQPR_PLAN_ID]`
+- URL: `[OLD_AWMQPR_PLAN_URL]`
+
+Inspect this plan to identify the existing hierarchy and existing test cases that need to be reused.
+
+---
+
+## 3. TARGET PLAN — New AWMQPR
+
+This is the plan that needs to be built/restructured.
+
+- Plan Name: `[NEW_AWMQPR_PLAN_NAME]`
+- Plan ID: `[NEW_AWMQPR_PLAN_ID]`
+- URL: `[NEW_AWMQPR_PLAN_URL]`
+
+Create the required Test Suite hierarchy in this plan based on the completed PDBQPR reference.
+
+---
+
+# BACKGROUND
+
+The old AWMQPR structure was created using an older project hierarchy. For example, the existing AWM structure contains something similar to:
+
+Project / Test Plan
+└── Cust Advisory Wealth Engagement
+    └── 50467 – TAP Suitability
+        ├── ST
+        └── SIT
+            └── Phase 1
+                ├── Reports
+                ├── Private Equity_PreOrder
+                └── Other existing suites/features containing test cases
+
+The completed PDBQPR follows a newer, sprint-based structure similar to:
+
+Project Cancellara – SIT Test Plan
+├── SIT-Sprint1
+│   ├── Application / Component 1
+│   │   └── Existing Test Cases
+│   ├── Application / Component 2
+│   │   └── Existing Test Cases
+│   └── Other Application / Component Suites
+├── SIT-Sprint2
+├── SIT-Sprint3
+└── SIT-Sprint4
+
+The exact completed PDBQPR structure must be inspected and used as the reference rather than relying only on the example above.
+
+---
+
+# CRITICAL REQUIREMENTS
+
+## 1. Analyse before making changes
+
+Before creating, modifying, moving, or adding anything:
+
+1. Inspect the complete relevant hierarchy of the completed PDBQPR reference plan.
+2. Identify:
+   - Top-level Test Suites
+   - Sprint structure
+   - Naming conventions
+   - Application/component-level suites
+   - Test case placement
+3. Inspect the complete relevant SIT hierarchy of the old AWMQPR.
+4. Identify:
+   - Existing phases/sprints
+   - Existing child suites
+   - Existing test cases
+   - Test case counts
+5. Compare the old AWMQPR structure with the completed PDBQPR structure.
+
+Do not make changes during this analysis stage.
+
+---
+
+# 2. THE MAIN GOAL IS STRUCTURE
+
+The purpose of this task is to correct and standardize the **Test Plan/Test Suite hierarchy**.
+
+The purpose is NOT to:
+
+- Create new test cases
+- Rewrite test cases
+- Modify test steps
+- Modify expected results
+- Modify test case titles
+- Change existing test case IDs unnecessarily
+
+The existing test cases should remain the same.
+
+---
+
+# 3. CRITICAL: REUSE EXISTING TEST CASES
+
+The existing Test Cases from the old AWMQPR must be reused as the **same Azure DevOps Test Case work items**.
+
+DO NOT:
+
+- Create new Test Cases
+- Clone existing Test Cases
+- Duplicate existing Test Cases
+- Create new Test Case IDs
+- Recreate test steps manually
+- Modify existing test case content unless explicitly instructed
+
+Instead:
+
+- Reuse/reference/add the existing Test Case work items to the appropriate Test Suites in the new AWMQPR structure.
+- The original Test Case ID must remain the same.
+
+If the available Azure DevOps operation would create a duplicate Test Case work item rather than reuse the existing Test Case, STOP and report this before proceeding.
+
+---
+
+# 4. CRITICAL: PRESERVE USER STORY AND RELATED WORK LINKS
+
+Existing Test Case work-item relationships must remain intact.
+
+This includes existing links to:
+
+- User Stories
+- Requirements
+- Bugs
+- Related Work Items
+- Other existing work-item relationships
+
+The migration/restructuring must NOT:
+
+- Remove existing User Story links
+- Break existing Related Work relationships
+- Replace existing links unnecessarily
+
+Because the same existing Test Case work item is being reused, the original Test Case ID and its existing work-item relationships should remain unchanged.
+
+After migration, validate a sample of migrated Test Cases and confirm:
+
+- The Test Case ID is unchanged.
+- Existing Related Work/User Story links are still present.
+- The Test Case appears in the correct new Test Suite.
+
+If any migration method would clone a Test Case or potentially break/remove relationships, STOP and report the issue before proceeding.
+
+---
+
+# 5. CREATE THE NEW AWMQPR STRUCTURE
+
+Use the completed PDBQPR as the reference and reproduce the same structural approach for AWMQPR.
+
+The expected approach is sprint-based, for example:
+
+SIT-Sprint1
+SIT-Sprint2
+SIT-Sprint3
+SIT-Sprint4
+
+Under each sprint, create the appropriate AWM application/component-level Test Suite(s), following the pattern used in the completed PDBQPR.
+
+For example, if applicable after analysing the old AWMQPR:
+
+SIT-Sprint1
+└── 50467 – TAP Suitability
+    └── Existing relevant Test Cases
+
+However, do not assume the exact mapping or hierarchy. Determine the correct structure by inspecting both the completed PDBQPR reference plan and the old AWMQPR source plan.
+
+---
+
+# EXECUTION PROCESS
+
+## PHASE 1 — ANALYSIS ONLY
+
+Perform the following without making any changes:
+
+### A. Analyse completed PDBQPR
+
+Retrieve and display:
+
+- Plan details
+- Complete relevant Test Suite hierarchy
+- Sprint-level structure
+- Application/component suites
+- Test case counts where available
+
+### B. Analyse old AWMQPR
+
+Retrieve and display:
+
+- Plan details
+- Existing SIT hierarchy
+- Existing Phase structure
+- Existing child suites/features
+- Existing Test Case IDs and counts where available
+
+### C. Compare structures
+
+Explain clearly:
+
+- What the old AWMQPR structure is
+- What the completed PDBQPR structure is
+- What structural transformation is required
+
+---
+
+# PHASE 2 — CREATE A DETAILED MIGRATION PLAN
+
+Before making any changes, provide a clear mapping in this format:
+
+SOURCE AWM LOCATION
+→
+TARGET AWM LOCATION
+
+For example:
+
+Old AWM:
+SIT
+→ Phase 1
+→ [Existing Suite/Feature]
+→ Existing Test Cases
+
+New AWM:
+SIT-Sprint1
+→ [Appropriate AWM Application/Component Suite]
+→ Same Existing Test Cases
+
+For every migration, show:
+
+1. Source Suite Path
+2. Target Suite Path
+3. Number of existing Test Cases
+4. Existing Test Case IDs, where practical
+5. Whether the Test Cases will be reused without creating duplicates
+
+Also list:
+
+- All Test Suites that need to be created
+- Their parent/child hierarchy
+- Any assumptions made
+- Any ambiguous mappings that require clarification
+
+IMPORTANT:
+
+Do not perform the migration yet.
+
+Wait for confirmation after presenting the migration plan.
+
+---
+
+# PHASE 3 — EXECUTE THE MIGRATION ONLY AFTER CONFIRMATION
+
+After receiving explicit confirmation:
+
+1. Create the required new Test Suite hierarchy in the target AWMQPR plan.
+2. Follow the completed PDBQPR structural pattern.
+3. Reuse/add/reference the existing AWM Test Case work items in the appropriate new Test Suites.
+4. Do NOT create or clone new Test Cases.
+5. Do NOT modify existing Test Case content.
+6. Preserve existing Test Case IDs.
+7. Preserve existing User Story/Related Work links.
+
+Do not delete the old AWMQPR structure unless explicitly instructed separately.
+
+---
+
+# PHASE 4 — VALIDATION
+
+After completing the migration, validate the result.
+
+Confirm:
+
+## Structure Validation
+
+- Required SIT Sprint suites exist.
+- The new AWMQPR hierarchy follows the completed PDBQPR structural approach.
+- Application/component suites are correctly placed under the appropriate sprint.
+
+## Test Case Validation
+
+- Existing Test Cases were reused.
+- No unnecessary new Test Case work items were created.
+- No duplicate Test Case work items were created.
+- Original Test Case IDs remain unchanged.
+- Test case counts are correct.
+
+## Link Validation
+
+Validate a representative sample of migrated Test Cases and confirm:
+
+- Existing User Story links remain intact.
+- Existing Related Work relationships remain intact.
+- Existing Requirements/Bug links remain intact where applicable.
+
+---
+
+# FINAL OUTPUT
+
+After validation, provide a summary containing:
+
+## 1. Created Structure
+
+Show the final AWMQPR Test Suite hierarchy.
+
+## 2. Migration Summary
+
+For each source → target mapping, show:
+
+- Source Suite
+- Target Suite
+- Number of Test Cases migrated/reused
+
+## 3. Test Case Integrity
+
+Confirm:
+
+- Existing Test Case IDs were preserved.
+- No duplicate Test Case work items were created.
+- Existing test case content was not modified.
+
+## 4. Link Integrity
+
+Confirm the results of the User Story/Related Work link validation.
+
+## 5. Exceptions
+
+Clearly list:
+
+- Any Test Cases that could not be mapped
+- Any ambiguous sprint/phase mappings
+- Any assumptions requiring manual confirmation
+
+---
+
+# SAFETY RULE
+
+START WITH PHASE 1 AND PHASE 2 ONLY.
+
+DO NOT CREATE, MODIFY, DELETE, CLONE, OR MOVE ANYTHING UNTIL:
+
+1. Both the completed PDBQPR reference plan and old AWMQPR source plan have been inspected.
+2. The proposed source → target migration mapping has been presented.
+3. The migration plan has been explicitly approved.
+
+The completed PDBQPR is the structural reference and must not be modified.
